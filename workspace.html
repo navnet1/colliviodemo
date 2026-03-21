@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Workspace</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <h2 class="logo">Collivio</h2>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="matching.html">Matching</a>
+      <a href="org.html">Org Panel</a>
+      <a href="verification.html">Verification</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- PROJECT INFO -->
+    <div class="card">
+      <h2>AI Study Buddy</h2>
+      <p>Build an AI-powered assistant to help students learn faster.</p>
+      <p><strong>Team:</strong> Aarav, Sara, Emily</p>
+    </div>
+
+    <!-- TASK INPUT -->
+    <div class="card">
+      <h3>Add Task</h3>
+      <input id="taskInput" placeholder="Enter new task..." />
+      <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <!-- TASK LIST -->
+    <div>
+      <h2>Task Board</h2>
+      <div id="tasks"></div>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div>
+      <h2>Activity Log</h2>
+      <div id="activity"></div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+
+  <script>
+    function renderActivity() {
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+      const activityHTML = tasks.map(t => `
+        <div class="card">
+          <p>Task added: ${t.text}</p>
+          <small>${t.time}</small>
+        </div>
+      `).join('');
+
+      document.getElementById('activity').innerHTML = activityHTML;
+    }
+
+    renderActivity();
+  </script>
+
+</body>
+</html>
