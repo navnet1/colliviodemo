@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillForge — Challenge Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    /* ── Shell ──────────────────────────────────────────────── */
+    .cl-shell {
+      display: grid;
+      grid-template-columns: 220px 1fr 290px;
+      min-height: calc(100vh - 64px);
+      margin-top: 64px;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       LEFT SIDEBAR
+    ════════════════════════════════════════════════════════ */
+    .cl-leftnav {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0;
+    }
+    .cl-leftnav::-webkit-scrollbar { width: 0; }
+
+    .cl-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.25rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.5rem;
+    }
+    .cl-nav-brand__icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--indigo), var(--fuchsia));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .cl-nav-brand__name {
+      font-family: var(--font-display);
+      font-size: 0.88rem; font-weight: 800;
+      color: var(--text); letter-spacing: -0.3px;
+      display: block;
+    }
+    .cl-nav-brand__sub {
+      font-size: 0.62rem; font-weight: 600; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 0.07em;
+    }
+
+    .cl-nav-section { padding: 0 0.75rem; margin-bottom: 0.25rem; }
+    .cl-nav-section-lbl {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-dim);
+      padding: 0.5rem 0.5rem 0.35rem; display: block;
+    }
+    .cl-nav-item {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.55rem 0.75rem; border-radius: var(--radius-sm);
+      font-size: 0.845rem; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s;
+      border: 1px solid transparent; user-select: none;
+    }
+    .cl-nav-item:hover { background: rgba(99,102,241,0.07); color: var(--text); }
+    .cl-nav-item.active {
+      background: rgba(99,102,241,0.14);
+      border-color: rgba(99,102,241,0.22);
+      color: var(--indigo-light);
+    }
+    .cl-nav-item .ni { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .cl-nav-badge {
+      margin-left: auto; font-size: 0.66rem; font-weight: 700;
+      padding: 0.1rem 0.45rem; border-radius: 999px;
+      background: rgba(99,102,241,0.2); color: var(--indigo-light);
+    }
+    .cl-nav-badge.gold {
+      background: rgba(245,158,11,0.15); color: var(--xp-gold);
+    }
+    .cl-nav-divider { height: 1px; background: var(--border); margin: 0.6rem 1.25rem; }
+
+    /* Watchlist */
+    .watchlist { padding: 0 0.75rem; }
+    .wl-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.5rem 0.6rem; border-radius: var(--radius-sm);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .wl-item:hover { background: rgba(255,255,255,0.03); }
+    .wl-logo {
+      width: 28px; height: 28px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; flex-shrink: 0; border: 1px solid var(--border);
+    }
+    .wl-name { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); flex: 1; }
+    .wl-status {
+      font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem;
+      border-radius: 999px; white-space: nowrap;
+    }
+    .wl-status.scouting { background: rgba(99,102,241,0.15); color: var(--indigo-light); }
+    .wl-status.reviewing { background: rgba(245,158,11,0.12); color: var(--xp-gold); }
+    .wl-status.watching { background: rgba(16,185,129,0.1); color: #34D399; }
+
+    /* Curator insights */
+    .cl-insights {
+      margin: auto 0.75rem 0;
+      padding: 1rem;
+      background: rgba(99,102,241,0.07);
+      border: 1px solid rgba(99,102,241,0.15);
+      border-radius: var(--radius-lg);
+    }
+    .ci-title { font-size: 0.72rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .ci-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); margin-bottom: 0.2rem; }
+    .ci-val {
+      font-family: var(--font-display); font-size: 1.4rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--indigo-light), var(--violet-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .ci-growth { font-size: 0.72rem; color: var(--success); font-weight: 600; margin-left: 0.4rem; }
+
+    /* ════════════════════════════════════════════════════════
+       MAIN CONTENT
+    ════════════════════════════════════════════════════════ */
+    .cl-main {
+      min-width: 0; background: var(--bg);
+      padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    /* ── Top Bar (tabs + sort) ───────────────────────────── */
+    .cl-topbar {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.35s ease both;
+    }
+    .cl-filter-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .cl-filter-tab {
+      padding: 0.45rem 1.1rem; border-radius: 999px;
+      font-size: 0.82rem; font-weight: 600;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+    }
+    .cl-filter-tab:hover { border-color: var(--border-bright); color: var(--text); }
+    .cl-filter-tab.active {
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      border-color: transparent; color: #fff;
+      box-shadow: 0 2px 12px rgba(79,70,229,0.35);
+    }
+    .cl-sort-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); font-size: 0.78rem; font-weight: 500;
+      color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+    }
+    .cl-sort-btn:hover { border-color: var(--border-bright); color: var(--text); }
+
+    /* ── OA Replace Banner ──────────────────────────────── */
+    .oa-banner {
+      position: relative; overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 2rem;
+      background:
+        radial-gradient(ellipse 80% 150% at 0% 50%, rgba(79,70,229,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 100% at 100% 0%, rgba(192,38,211,0.2) 0%, transparent 55%),
+        var(--bg-card);
+      border: 1px solid rgba(99,102,241,0.3);
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+      animation: fadeUp 0.35s 0.05s ease both;
+    }
+    .oa-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none;
+    }
+    .oa-banner__left { position: relative; z-index: 1; }
+    .oa-banner__eyebrow {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.28rem 0.75rem; border-radius: 999px;
+      border: 1px solid rgba(245,158,11,0.35);
+      background: rgba(245,158,11,0.1);
+      font-size: 0.7rem; font-weight: 700; color: var(--xp-gold);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.65rem;
+    }
+    .oa-banner__title {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 800;
+      letter-spacing: -0.4px; margin-bottom: 0.4rem;
+    }
+    .oa-banner__sub { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; max-width: 460px; }
+    .oa-banner__pills {
+      display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;
+    }
+    .oa-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 500;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .oa-banner__right { position: relative; z-index: 1; text-align: right; }
+    .oa-big-stat {
+      font-family: var(--font-display);
+      font-size: 2.5rem; font-weight: 800; line-height: 1;
+      background: linear-gradient(135deg, var(--xp-gold), var(--xp-gold-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .oa-big-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    /* ── Page Tabs (Open / Submissions / Leaderboard) ────── */
+    .cl-page-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      gap: 0; animation: fadeUp 0.35s 0.1s ease both;
+    }
+    .cl-page-tab {
+      padding: 0.6rem 1.25rem; font-size: 0.875rem; font-weight: 600;
+      color: var(--text-muted); background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.45rem;
+    }
+    .cl-page-tab.active { color: var(--indigo-light); border-bottom-color: var(--indigo); }
+    .cl-page-tab:hover:not(.active) { color: var(--text); }
+    .cpt-count {
+      font-size: 0.65rem; font-weight: 700; padding: 0.12rem 0.42rem;
+      border-radius: 999px; background: rgba(99,102,241,0.15); color: var(--indigo-light);
+    }
+
+    /* ── Tab Panels ─────────────────────────────────────── */
+    .cl-panel { display: none; }
+    .cl-panel.active { display: block; animation: fadeIn 0.25s ease both; }
+
+    /* ════════ CHALLENGE FEED (editorial cards) ════════════ */
+    .challenge-feed { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* Hero Challenge Card */
+    .ch-card {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      transition: border-color 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+    }
+    .ch-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 12px 48px rgba(79,70,229,0.18);
+    }
+
+    /* Card hero image area */
+    .ch-hero {
+      position: relative; height: 280px;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .ch-hero-img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .ch-card:hover .ch-hero-img { transform: scale(1.03); }
+    .ch-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,18,0.95) 0%, rgba(10,10,18,0.4) 50%, rgba(10,10,18,0.1) 100%);
+    }
+
+    /* Gradient canvas fallback (no real images) */
+    .ch-hero-canvas {
+      position: absolute; inset: 0;
+    }
+
+    .ch-hero-badges {
+      position: absolute; top: 1rem; left: 1rem;
+      display: flex; gap: 0.5rem; z-index: 2;
+    }
+    .ch-status-badge {
+      padding: 0.28rem 0.75rem; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .ch-ref {
+      padding: 0.28rem 0.75rem; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+      background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    .ch-hero-content {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.5rem 1.75rem; z-index: 2;
+    }
+    .ch-company-row {
+      display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.6rem;
+    }
+    .ch-company-logo {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(6px);
+    }
+    .ch-company-info { display: flex; flex-direction: column; gap: 0.1rem; }
+    .ch-company-name { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .ch-company-role { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .ch-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800; color: #fff;
+      letter-spacing: -0.5px; line-height: 1.15;
+      text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .ch-hero-meta {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .ch-meta-stat {
+      display: flex; flex-direction: column; gap: 0.05rem;
+    }
+    .ch-meta-val {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 800; color: #fff;
+    }
+    .ch-meta-val.gold { color: var(--xp-gold); }
+    .ch-meta-lbl { font-size: 0.65rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* Card body */
+    .ch-body {
+      padding: 1.25rem 1.75rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .ch-col-divider { border-left: 1px solid var(--border); padding-left: 1.25rem; }
+    .ch-col-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.45rem;
+    }
+    .ch-col-text { font-size: 0.835rem; color: var(--text-muted); line-height: 1.6; }
+
+    .ch-actions { display: flex; flex-direction: column; gap: 0.55rem; align-items: flex-end; }
+    .ch-join-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.4rem; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      color: #fff; font-size: 0.85rem; font-weight: 700;
+      border: none; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(79,70,229,0.4);
+      transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .ch-join-btn::after {
+      content: ''; position: absolute;
+      top: -50%; left: -100%; width: 60%; height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: skewX(-20deg); transition: left 0.5s;
+    }
+    .ch-join-btn:hover { box-shadow: 0 6px 28px rgba(79,70,229,0.6); transform: translateY(-1px); }
+    .ch-join-btn:hover::after { left: 160%; }
+    .ch-sub-btns { display: flex; gap: 0.4rem; }
+    .ch-sub-btn {
+      padding: 0.45rem 0.85rem; border-radius: var(--radius-sm);
+      font-size: 0.75rem; font-weight: 600;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+    }
+    .ch-sub-btn:hover { border-color: var(--border-bright); color: var(--text); }
+
+    /* Footer strip */
+    .ch-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+      padding: 0.85rem 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .ch-footer-left { display: flex; align-items: center; gap: 1rem; }
+    .ch-endorsers {
+      display: flex; align-items: center;
+    }
+    .ch-endorser-av {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 800; color: #fff;
+      border: 2px solid var(--bg-card);
+      margin-left: -6px;
+    }
+    .ch-endorser-av:first-child { margin-left: 0; }
+    .ch-endorser-more {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(99,102,241,0.2); border: 2px solid var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.58rem; font-weight: 700; color: var(--indigo-light);
+      margin-left: -6px;
+    }
+    .ch-footer-stat { font-size: 0.75rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem; }
+    .ch-view-btn {
+      padding: 0.4rem 1rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: transparent;
+      font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .ch-view-btn:hover { border-color: var(--border-bright); color: var(--text); }
+
+    /* Countdown pill */
+    .countdown-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.25rem 0.65rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 600;
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+      color: #FCA5A5;
+    }
+    .countdown-pill.ok {
+      background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.25);
+      color: #34D399;
+    }
+
+    /* ════════ MY SUBMISSIONS ══════════════════════════════ */
+    .submissions-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .sub-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 0.85rem;
+      transition: border-color 0.2s;
+    }
+    .sub-card:hover { border-color: var(--border-bright); }
+    .sub-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+    .sub-company { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.25rem; display: block; }
+    .sub-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .sub-status-badge {
+      font-size: 0.68rem; font-weight: 700; padding: 0.25rem 0.65rem;
+      border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+    }
+    .sub-status-badge.review  { background: rgba(245,158,11,0.12); color: var(--xp-gold); border: 1px solid rgba(245,158,11,0.25); }
+    .sub-status-badge.done    { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .sub-status-badge.draft   { background: rgba(99,102,241,0.12); color: var(--indigo-light); border: 1px solid rgba(99,102,241,0.25); }
+    .sub-status-badge.ranked  { background: rgba(192,38,211,0.12); color: #E879F9; border: 1px solid rgba(192,38,211,0.25); }
+    .sub-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .sub-meta-item { font-size: 0.75rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem; }
+    .sub-prog-wrap { display: flex; flex-direction: column; gap: 0.3rem; }
+    .sub-prog-lbl { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); }
+    .sub-prog-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+    .sub-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--indigo), var(--violet)); }
+    .sub-actions { display: flex; gap: 0.5rem; }
+
+    /* ════════ LEADERBOARD ═════════════════════════════════ */
+    .lb-wrap { display: flex; flex-direction: column; gap: 1.25rem; }
+    .lb-header {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .lb-period-tabs {
+      display: flex; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 0.2rem; gap: 0.2rem;
+    }
+    .lb-period-tab {
+      padding: 0.35rem 0.8rem; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 500; color: var(--text-muted);
+      background: none; border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .lb-period-tab.active {
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+    }
+
+    /* Podium */
+    .lb-podium {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem; align-items: end; margin-bottom: 0.5rem;
+    }
+    .podium-item {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.6rem; padding: 1.25rem 0.75rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); text-align: center;
+      transition: all 0.2s;
+    }
+    .podium-item:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+    .podium-item.gold {
+      background: linear-gradient(180deg, rgba(245,158,11,0.1) 0%, var(--bg-card) 100%);
+      border-color: rgba(245,158,11,0.3);
+    }
+    .podium-item.silver {
+      background: linear-gradient(180deg, rgba(148,163,184,0.08) 0%, var(--bg-card) 100%);
+      border-color: rgba(148,163,184,0.2);
+    }
+    .podium-item.bronze {
+      background: linear-gradient(180deg, rgba(180,83,9,0.08) 0%, var(--bg-card) 100%);
+      border-color: rgba(180,83,9,0.2);
+    }
+    .podium-crown { font-size: 1.5rem; }
+    .podium-av {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.25rem; font-weight: 800;
+      color: #fff; border: 3px solid transparent;
+    }
+    .podium-item.gold   .podium-av { border-color: var(--xp-gold); }
+    .podium-item.silver .podium-av { border-color: #94A3B8; }
+    .podium-item.bronze .podium-av { border-color: #B45309; }
+    .podium-name { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+    .podium-school { font-size: 0.7rem; color: var(--text-dim); }
+    .podium-xp {
+      font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--xp-gold);
+    }
+
+    /* Full leaderboard table */
+    .lb-table-wrap {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); overflow: hidden;
+    }
+    .lb-table { width: 100%; border-collapse: collapse; }
+    .lb-table thead th {
+      padding: 0.85rem 1.25rem; text-align: left;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: var(--text-dim);
+      border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02);
+    }
+    .lb-table tbody tr {
+      border-bottom: 1px solid var(--border); transition: background 0.15s; cursor: pointer;
+    }
+    .lb-table tbody tr:last-child { border-bottom: none; }
+    .lb-table tbody tr:hover { background: rgba(99,102,241,0.04); }
+    .lb-table tbody tr.me { background: rgba(99,102,241,0.08); }
+    .lb-table td { padding: 0.85rem 1.25rem; }
+    .lb-rank-num {
+      font-family: var(--font-display); font-size: 1rem; font-weight: 800;
+      color: var(--text-dim); width: 32px;
+    }
+    .lb-rank-num.top3 { color: var(--xp-gold); }
+    .lb-player { display: flex; align-items: center; gap: 0.75rem; }
+    .lb-av {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .lb-player-info { display: flex; flex-direction: column; gap: 0.1rem; }
+    .lb-player-name { font-size: 0.855rem; font-weight: 600; color: var(--text); }
+    .lb-player-school { font-size: 0.7rem; color: var(--text-dim); }
+    .lb-xp-val {
+      font-family: var(--font-display); font-size: 0.95rem;
+      font-weight: 800; color: var(--xp-gold);
+    }
+    .lb-challenges { font-size: 0.82rem; color: var(--text-muted); }
+    .lb-wins { font-size: 0.82rem; color: #34D399; font-weight: 600; }
+    .lb-move { font-size: 0.72rem; font-weight: 700; }
+    .lb-move.up { color: var(--success); }
+    .lb-move.down { color: var(--danger); }
+    .lb-move.same { color: var(--text-dim); }
+    .lb-level {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.2rem 0.55rem; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 700;
+      background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25);
+      color: var(--violet-light);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RIGHT SIDEBAR
+    ════════════════════════════════════════════════════════ */
+    .cl-rightnav {
+      position: sticky; top: 64px;
+      height: calc(100vh - 64px); overflow-y: auto;
+      background: var(--bg-card); border-left: 1px solid var(--border);
+      padding: 1.5rem 1.25rem; display: flex; flex-direction: column; gap: 1.25rem;
+    }
+    .cl-rightnav::-webkit-scrollbar { width: 0; }
+
+    .rs-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-dim); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* Trending Challenges */
+    .trending-ch { display: flex; flex-direction: column; gap: 0.6rem; }
+    .tch-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      padding: 0.75rem; border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .tch-item:hover { border-color: var(--border-bright); background: rgba(99,102,241,0.05); }
+    .tch-num {
+      font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+      color: rgba(255,255,255,0.07); flex-shrink: 0; line-height: 1; width: 22px;
+    }
+    .tch-num.gold-num { color: var(--xp-gold); }
+    .tch-info { flex: 1; min-width: 0; }
+    .tch-cat { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .tch-title { font-size: 0.8rem; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 0.2rem; }
+    .tch-meta { display: flex; align-items: center; gap: 0.5rem; }
+    .tch-count { font-size: 0.68rem; color: var(--text-dim); }
+    .tch-growth { font-size: 0.68rem; font-weight: 700; }
+    .tch-growth.up   { color: var(--success); }
+    .tch-growth.flat { color: var(--text-dim); }
+    .tch-growth.down { color: var(--danger); }
+
+    /* Global Growth Chart */
+    .growth-box {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1rem; position: relative;
+    }
+    .growth-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .growth-top-lbl {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: var(--text-dim);
+    }
+    .growth-live-pill {
+      display: flex; align-items: center; gap: 0.3rem;
+      font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem;
+      border-radius: 999px; background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25); color: #34D399;
+    }
+    .growth-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #34D399; animation: pulse-glow 1.5s infinite; }
+    .growth-chart {
+      display: flex; align-items: flex-end; gap: 3px; height: 80px;
+      margin-bottom: 0.75rem;
+    }
+    .gc-bar {
+      flex: 1; border-radius: 3px 3px 0 0;
+      background: rgba(99,102,241,0.25);
+      transition: background 0.2s; min-height: 4px;
+    }
+    .gc-bar:hover { background: rgba(99,102,241,0.6); }
+    .gc-bar.hi { background: rgba(192,38,211,0.55); }
+    .gc-bar.lo { background: rgba(99,102,241,0.15); }
+    .growth-quote {
+      font-size: 0.72rem; color: var(--text-dim);
+      line-height: 1.55; font-style: italic;
+      border-left: 2px solid rgba(99,102,241,0.4); padding-left: 0.75rem;
+    }
+    .growth-quote strong { color: var(--indigo-light); font-style: normal; }
+
+    /* Company Scouts */
+    .scout-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .scout-item {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.6rem 0.75rem; border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .scout-item:hover { border-color: var(--border-bright); }
+    .scout-logo {
+      width: 30px; height: 30px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0; border: 1px solid var(--border);
+    }
+    .scout-info { flex: 1; min-width: 0; }
+    .scout-name { font-size: 0.78rem; font-weight: 600; color: var(--text); }
+    .scout-action { font-size: 0.68rem; color: var(--text-dim); }
+    .scout-badge {
+      font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem;
+      border-radius: 999px; white-space: nowrap;
+    }
+    .scout-badge.scouting { background: rgba(99,102,241,0.15); color: var(--indigo-light); }
+    .scout-badge.hiring   { background: rgba(16,185,129,0.12); color: #34D399; }
+    .scout-badge.shortlist{ background: rgba(245,158,11,0.12); color: var(--xp-gold); }
+
+    /* My Stats */
+    .my-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .my-stat {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 0.75rem; text-align: center;
+    }
+    .my-stat-val {
+      font-family: var(--font-display); font-size: 1.25rem; font-weight: 800;
+      display: block; background: linear-gradient(135deg, var(--text), var(--indigo-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .my-stat-val.gold { background: linear-gradient(135deg, var(--xp-gold), var(--xp-gold-light)); -webkit-background-clip: text; background-clip: text; }
+    .my-stat-lbl { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.15rem; }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .cl-shell { grid-template-columns: 200px 1fr 0; }
+      .cl-rightnav { display: none; }
+    }
+    @media (max-width: 800px) {
+      .cl-shell { grid-template-columns: 0 1fr 0; }
+      .cl-leftnav { display: none; }
+      .cl-main { padding: 1.25rem; }
+      .ch-body { grid-template-columns: 1fr; }
+      .ch-col-divider { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 1rem; }
+      .ch-actions { align-items: stretch; }
+      .submissions-grid { grid-template-columns: 1fr; }
+      .lb-podium { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <span class="navbar__logo">⚡ SkillForge</span>
+  <ul class="navbar__links">
+    <li><a href="profile.html">Profile</a></li>
+    <li><a href="skill-bridge.html">Skill Bridge</a></li>
+    <li><a href="research-hub.html">Research Hub</a></li>
+    <li><a href="challenge-lab.html" class="active">Challenge Lab</a></li>
+  </ul>
+  <div class="navbar__xp">⚡ <span>2,450 XP</span></div>
+</nav>
+
+<div class="cl-shell">
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <nav class="cl-leftnav">
+    <div class="cl-nav-brand">
+      <div class="cl-nav-brand__icon">🧪</div>
+      <div>
+        <span class="cl-nav-brand__name">Challenge Lab</span>
+        <span class="cl-nav-brand__sub">Open Competitions</span>
+      </div>
+    </div>
+
+    <div class="cl-nav-section">
+      <span class="cl-nav-section-lbl">Explore</span>
+      <div class="cl-nav-item active" onclick="navClick(this)"><span class="ni">🏆</span> Feed <span class="cl-nav-badge gold">Live</span></div>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">🔥</span> Hot Now</div>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">🌐</span> Global Discovery</div>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">📊</span> Impact Reports</div>
+    </div>
+
+    <div class="cl-nav-divider"></div>
+
+    <div class="cl-nav-section">
+      <span class="cl-nav-section-lbl">My Lab</span>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">📋</span> My Submissions <span class="cl-nav-badge">3</span></div>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">📈</span> Analytics</div>
+      <div class="cl-nav-item" onclick="navClick(this)"><span class="ni">🤝</span> Collaborators</div>
+    </div>
+
+    <div class="cl-nav-divider"></div>
+
+    <div class="cl-nav-section">
+      <span class="cl-nav-section-lbl">Industry Watchlist</span>
+    </div>
+    <div class="watchlist">
+      <div class="wl-item">
+        <div class="wl-logo" style="background:rgba(79,70,229,0.1);">🚀</div>
+        <span class="wl-name">TechCorps</span>
+        <span class="wl-status scouting">Scouting</span>
+      </div>
+      <div class="wl-item">
+        <div class="wl-logo" style="background:rgba(16,185,129,0.1);">🌱</div>
+        <span class="wl-name">GreenVentures</span>
+        <span class="wl-status reviewing">Reviewing</span>
+      </div>
+      <div class="wl-item">
+        <div class="wl-logo" style="background:rgba(245,158,11,0.1);">⚡</div>
+        <span class="wl-name">PayNXT</span>
+        <span class="wl-status watching">Watching</span>
+      </div>
+      <div class="wl-item">
+        <div class="wl-logo" style="background:rgba(239,68,68,0.1);">🧠</div>
+        <span class="wl-name">NeuroLeap</span>
+        <span class="wl-status scouting">Scouting</span>
+      </div>
+    </div>
+
+    <div class="cl-insights">
+      <div class="ci-title">Curator Insights</div>
+      <div class="ci-label">YOUR GLOBAL RANK</div>
+      <div><span class="ci-val">#42</span><span class="ci-growth">+12.4% ↑</span></div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="cl-main">
+
+    <!-- Top Filter Bar -->
+    <div class="cl-topbar">
+      <div class="cl-filter-tabs">
+        <button class="cl-filter-tab active" onclick="setFilter('all',this)">🔥 Viral</button>
+        <button class="cl-filter-tab" onclick="setFilter('tech',this)">💻 Tech</button>
+        <button class="cl-filter-tab" onclick="setFilter('design',this)">🎨 Design</button>
+        <button class="cl-filter-tab" onclick="setFilter('research',this)">🔬 Research</button>
+        <button class="cl-filter-tab" onclick="setFilter('social',this)">🌍 Social Impact</button>
+      </div>
+      <button class="cl-sort-btn">≡ Sort by Impact</button>
+    </div>
+
+    <!-- OA Replace Banner -->
+    <div class="oa-banner">
+      <div class="oa-banner__left">
+        <div class="oa-banner__eyebrow">⚡ No OA Required</div>
+        <h2 class="oa-banner__title">Your challenge history IS your interview.</h2>
+        <p class="oa-banner__sub">Companies on SkillForge review your competition submissions and XP history instead of putting you through traditional online assessments. Build your record, skip the grind.</p>
+        <div class="oa-banner__pills">
+          <span class="oa-pill">✅ No XP level needed to join</span>
+          <span class="oa-pill">🏆 Top performers get direct calls</span>
+          <span class="oa-pill">📊 Submissions reviewed by hiring teams</span>
+        </div>
+      </div>
+      <div class="oa-banner__right">
+        <div class="oa-big-stat">89%</div>
+        <div class="oa-big-label">of placements came from<br />Challenge Lab submissions</div>
+      </div>
+    </div>
+
+    <!-- Page Tabs -->
+    <div class="cl-page-tabs">
+      <button class="cl-page-tab active" onclick="switchTab('open', this)">🏆 Open Challenges <span class="cpt-count">24</span></button>
+      <button class="cl-page-tab" onclick="switchTab('sub', this)">📋 My Submissions <span class="cpt-count">3</span></button>
+      <button class="cl-page-tab" onclick="switchTab('lb', this)">📈 Leaderboard <span class="cpt-count">1.2K</span></button>
+    </div>
+
+    <!-- ══ OPEN CHALLENGES PANEL ══ -->
+    <div class="cl-panel active" id="panel-open">
+      <div class="challenge-feed" id="challenge-feed"></div>
+    </div>
+
+    <!-- ══ MY SUBMISSIONS PANEL ══ -->
+    <div class="cl-panel" id="panel-sub">
+      <div class="submissions-grid">
+
+        <div class="sub-card">
+          <div class="sub-top">
+            <div>
+              <span class="sub-company">🏢 TechCorps · REF: TCH-014</span>
+              <div class="sub-title">AI-Powered Resume Screener for Diversity Hiring</div>
+            </div>
+            <span class="sub-status-badge ranked">🥈 Rank 2</span>
+          </div>
+          <div class="sub-meta">
+            <span class="sub-meta-item">⚡ +480 XP earned</span>
+            <span class="sub-meta-item">📅 Submitted Mar 18</span>
+          </div>
+          <div class="sub-prog-wrap">
+            <div class="sub-prog-lbl"><span>Evaluation Progress</span><span>100%</span></div>
+            <div class="sub-prog-bar"><div class="sub-prog-fill" style="width:100%"></div></div>
+          </div>
+          <div class="sub-actions">
+            <button class="btn btn--outline btn--sm">View Feedback</button>
+            <button class="btn btn--primary btn--sm">View Certificate ⚡</button>
+          </div>
+        </div>
+
+        <div class="sub-card">
+          <div class="sub-top">
+            <div>
+              <span class="sub-company">🌱 GreenVentures · REF: GV-007</span>
+              <div class="sub-title">Carbon Footprint Tracker for SMEs in India</div>
+            </div>
+            <span class="sub-status-badge review">Under Review</span>
+          </div>
+          <div class="sub-meta">
+            <span class="sub-meta-item">⚡ Up to +350 XP</span>
+            <span class="sub-meta-item">📅 Submitted Mar 22</span>
+          </div>
+          <div class="sub-prog-wrap">
+            <div class="sub-prog-lbl"><span>Evaluation Progress</span><span>65%</span></div>
+            <div class="sub-prog-bar"><div class="sub-prog-fill" style="width:65%"></div></div>
+          </div>
+          <div class="sub-actions">
+            <button class="btn btn--ghost btn--sm">View Submission</button>
+            <button class="btn btn--outline btn--sm">Track Status</button>
+          </div>
+        </div>
+
+        <div class="sub-card">
+          <div class="sub-top">
+            <div>
+              <span class="sub-company">⚡ PayNXT · REF: PNX-021</span>
+              <div class="sub-title">UPI Fraud Detection Model — Real-time Scoring</div>
+            </div>
+            <span class="sub-status-badge draft">In Progress</span>
+          </div>
+          <div class="sub-meta">
+            <span class="sub-meta-item">⚡ Up to +520 XP</span>
+            <span class="sub-meta-item">⏰ Due Apr 30</span>
+          </div>
+          <div class="sub-prog-wrap">
+            <div class="sub-prog-lbl"><span>Completion</span><span>40%</span></div>
+            <div class="sub-prog-bar"><div class="sub-prog-fill" style="width:40%"></div></div>
+          </div>
+          <div class="sub-actions">
+            <button class="btn btn--ghost btn--sm">Resume Editing</button>
+            <button class="btn btn--primary btn--sm">Continue →</button>
+          </div>
+        </div>
+
+        <div class="sub-card" style="border-style:dashed;background:transparent;align-items:center;justify-content:center;min-height:180px;cursor:pointer;" onclick="switchTab('open',document.querySelector('.cl-page-tab'))">
+          <div style="text-align:center;color:var(--text-dim)">
+            <div style="font-size:2rem;margin-bottom:0.5rem">➕</div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text-muted)">Join a new challenge</div>
+            <div style="font-size:0.75rem;margin-top:0.25rem">Browse Open Challenges →</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ LEADERBOARD PANEL ══ -->
+    <div class="cl-panel" id="panel-lb">
+      <div class="lb-wrap">
+        <div class="lb-header">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:800;letter-spacing:-0.3px;">Global Leaderboard</h2>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.2rem;">Based on XP earned through challenges and verified submissions</p>
+          </div>
+          <div class="lb-period-tabs">
+            <button class="lb-period-tab active" onclick="setPeriod(this)">This Week</button>
+            <button class="lb-period-tab" onclick="setPeriod(this)">This Month</button>
+            <button class="lb-period-tab" onclick="setPeriod(this)">All Time</button>
+          </div>
+        </div>
+
+        <!-- Podium -->
+        <div class="lb-podium">
+          <div class="podium-item silver">
+            <div class="podium-crown">🥈</div>
+            <div class="podium-av" style="background:linear-gradient(135deg,#0EA5E9,#6366F1)">P</div>
+            <div class="podium-name">Priya Menon</div>
+            <div class="podium-school">IIT Bombay</div>
+            <div class="podium-xp">⚡ 3,820 XP</div>
+            <span class="lb-level">Lv 6</span>
+          </div>
+          <div class="podium-item gold" style="padding-top:2rem;">
+            <div class="podium-crown">🥇</div>
+            <div class="podium-av" style="background:linear-gradient(135deg,#F59E0B,#EF4444);width:64px;height:64px;font-size:1.5rem;">R</div>
+            <div class="podium-name">Rahul Nair</div>
+            <div class="podium-school">NIT Trichy</div>
+            <div class="podium-xp" style="font-size:1.25rem;">⚡ 4,750 XP</div>
+            <span class="lb-level">Lv 8</span>
+          </div>
+          <div class="podium-item bronze">
+            <div class="podium-crown">🥉</div>
+            <div class="podium-av" style="background:linear-gradient(135deg,#14B8A6,#4F46E5)">A</div>
+            <div class="podium-name">Arjun Sharma</div>
+            <div class="podium-school">IIT Bangalore</div>
+            <div class="podium-xp">⚡ 2,450 XP <span style="font-size:0.65rem;color:var(--indigo-light)">(You)</span></div>
+            <span class="lb-level">Lv 5</span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="lb-table-wrap">
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>XP Earned</th>
+                <th>Challenges</th>
+                <th>Wins</th>
+                <th>Level</th>
+                <th>Movement</th>
+              </tr>
+            </thead>
+            <tbody id="lb-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ RIGHT SIDEBAR ═══ -->
+  <aside class="cl-rightnav">
+
+    <!-- My Challenge Stats -->
+    <div>
+      <div class="rs-title">📊 My Stats</div>
+      <div class="my-stats-grid">
+        <div class="my-stat"><span class="my-stat-val gold">2,450</span><span class="my-stat-lbl">Total XP</span></div>
+        <div class="my-stat"><span class="my-stat-val">#42</span><span class="my-stat-lbl">Global Rank</span></div>
+        <div class="my-stat"><span class="my-stat-val">3</span><span class="my-stat-lbl">Entered</span></div>
+        <div class="my-stat"><span class="my-stat-val">1</span><span class="my-stat-lbl">Wins</span></div>
+      </div>
+    </div>
+
+    <!-- Top Trending Challenges -->
+    <div>
+      <div class="rs-title">📈 Top Trending Challenges</div>
+      <div class="trending-ch">
+        <div class="tch-item">
+          <div class="tch-num gold-num">01</div>
+          <div class="tch-info">
+            <div class="tch-cat" style="color:#818CF8">AI & FINTECH</div>
+            <div class="tch-title">UPI Fraud Detection Model</div>
+            <div class="tch-meta">
+              <span class="tch-count">🤝 12.4K joins</span>
+              <span class="tch-growth up">↑ 44%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tch-item">
+          <div class="tch-num gold-num">02</div>
+          <div class="tch-info">
+            <div class="tch-cat" style="color:#34D399">SUSTAINABILITY</div>
+            <div class="tch-title">Carbon Footprint for SMEs</div>
+            <div class="tch-meta">
+              <span class="tch-count">🤝 8.9K joins</span>
+              <span class="tch-growth up">↑ 12%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tch-item">
+          <div class="tch-num">03</div>
+          <div class="tch-info">
+            <div class="tch-cat" style="color:#F87171">HEALTH TECH</div>
+            <div class="tch-title">Rural Tele-Diagnosis Tool</div>
+            <div class="tch-meta">
+              <span class="tch-count">🤝 7.2K joins</span>
+              <span class="tch-growth flat">→ 0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tch-item">
+          <div class="tch-num">04</div>
+          <div class="tch-info">
+            <div class="tch-cat" style="color:#FCD34D">EDTECH</div>
+            <div class="tch-title">Offline Quiz PWA Challenge</div>
+            <div class="tch-meta">
+              <span class="tch-count">🤝 5.1K joins</span>
+              <span class="tch-growth up">↑ 8%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tch-item">
+          <div class="tch-num">05</div>
+          <div class="tch-info">
+            <div class="tch-cat" style="color:#A78BFA">AGRITECH</div>
+            <div class="tch-title">Pest Vision — Open Dataset</div>
+            <div class="tch-meta">
+              <span class="tch-count">🤝 4.3K joins</span>
+              <span class="tch-growth down">↓ 2%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Growth Chart -->
+    <div class="growth-box">
+      <div class="growth-top">
+        <span class="growth-top-lbl">Global Growth</span>
+        <span class="growth-live-pill"><span class="growth-live-dot"></span> LIVE</span>
+      </div>
+      <div class="growth-chart" id="growth-chart"></div>
+      <div class="growth-quote">
+        "Challenge velocity has increased by <strong>2.4×</strong> in the last quarter across all Lab categories."
+      </div>
+    </div>
+
+    <!-- Companies Scouting -->
+    <div>
+      <div class="rs-title">🔍 Companies Scouting You</div>
+      <div class="scout-list">
+        <div class="scout-item">
+          <div class="scout-logo" style="background:rgba(79,70,229,0.1);">🚀</div>
+          <div class="scout-info">
+            <div class="scout-name">TechCorps</div>
+            <div class="scout-action">Viewed your AI submission</div>
+          </div>
+          <span class="scout-badge scouting">Scouting</span>
+        </div>
+        <div class="scout-item">
+          <div class="scout-logo" style="background:rgba(16,185,129,0.1);">🌱</div>
+          <div class="scout-info">
+            <div class="scout-name">GreenVentures</div>
+            <div class="scout-action">Reviewing your submission</div>
+          </div>
+          <span class="scout-badge shortlist">Shortlisted</span>
+        </div>
+        <div class="scout-item">
+          <div class="scout-logo" style="background:rgba(245,158,11,0.1);">⚡</div>
+          <div class="scout-info">
+            <div class="scout-name">PayNXT</div>
+            <div class="scout-action">Posted 2 new challenges</div>
+          </div>
+          <span class="scout-badge hiring">Hiring</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════ -->
+<script>
+
+/* ── Challenge Data ──────────────────────────────────────── */
+const CHALLENGES = [
+  {
+    id: 1,
+    category: "AI & FINTECH",
+    catColor: "#818CF8", catBg: "rgba(129,140,248,0.15)",
+    status: "VIRAL IMPACT",
+    statusColor: "#fff", statusBg: "linear-gradient(135deg,#4F46E5,#7C3AED)",
+    ref: "REF: TCH-021",
+    company: "TechCorps", compEmoji: "🚀", compRole: "FINTECH LEAD",
+    compBg: "rgba(79,70,229,0.15)",
+    title: "THE FUTURE OF UPI FRAUD DETECTION?",
+    problem: "UPI transaction fraud has crossed ₹1,000 Cr/year in India. Existing rule-based systems miss 34% of novel fraud patterns, especially in micro-transaction clusters.",
+    solution: "Build a real-time ML scoring engine that classifies transactions within 50ms with >92% precision. Must handle 10K TPS on commodity hardware.",
+    xp: 520,
+    prize: "₹50,000",
+    participants: "8.4K",
+    score: "94%",
+    scoreLabel: "IMPACT",
+    deadline: "Apr 30, 2026",
+    daysLeft: 33,
+    diff: "Hard",
+    tags: ["tech"],
+    canvasColors: ["#0D0D28","#1a1a4e","#0a0a1a"],
+    gradient: "radial-gradient(ellipse 80% 80% at 20% 50%, rgba(79,70,229,0.6) 0%, rgba(10,10,26,0.0) 60%), radial-gradient(ellipse 60% 60% at 80% 20%, rgba(124,58,237,0.5) 0%, transparent 60%), #0D0D28",
+    pattern: "circuit",
+    endorsers: [{i:"P",c:"#0EA5E9"},{i:"R",c:"#F59E0B"},{i:"A",c:"#10B981"}],
+    endorseCount: "8.4K",
+    insights: "1.2M",
+  },
+  {
+    id: 2,
+    category: "SUSTAINABILITY",
+    catColor: "#34D399", catBg: "rgba(52,211,153,0.12)",
+    status: "OPEN CHALLENGE",
+    statusColor: "#fff", statusBg: "linear-gradient(135deg,#059669,#10B981)",
+    ref: "REF: GV-012",
+    company: "GreenVentures", compEmoji: "🌱", compRole: "CLIMATE LEAD",
+    compBg: "rgba(16,185,129,0.15)",
+    title: "CARBON ZERO FOR INDIA'S 63M SMES",
+    problem: "India's 63 million SMEs account for 45% of industrial carbon emissions, yet 94% have zero tools to measure their footprint. Regulatory carbon reporting is mandatory from 2027.",
+    solution: "Design a lightweight SaaS tool that lets an SME owner with no technical background calculate, track, and offset their carbon footprint in under 10 minutes.",
+    xp: 350,
+    prize: "₹25,000",
+    participants: "5.2K",
+    score: "88%",
+    scoreLabel: "IMPACT",
+    deadline: "Apr 18, 2026",
+    daysLeft: 21,
+    diff: "Medium",
+    tags: ["research","social"],
+    gradient: "radial-gradient(ellipse 70% 80% at 80% 30%, rgba(16,185,129,0.45) 0%, transparent 60%), radial-gradient(ellipse 80% 60% at 10% 80%, rgba(4,120,87,0.4) 0%, transparent 60%), #070F0B",
+    pattern: "earth",
+    endorsers: [{i:"E",c:"#059669"},{i:"J",c:"#14B8A6"},{i:"K",c:"#10B981"}],
+    endorseCount: "5.2K",
+    insights: "890K",
+  },
+  {
+    id: 3,
+    category: "HEALTH TECH",
+    catColor: "#F87171", catBg: "rgba(248,113,113,0.12)",
+    status: "URGENT",
+    statusColor: "#fff", statusBg: "linear-gradient(135deg,#DC2626,#EF4444)",
+    ref: "REF: HL-008",
+    company: "HealthBridge", compEmoji: "🏥", compRole: "MEDTECH LEAD",
+    compBg: "rgba(239,68,68,0.15)",
+    title: "RURAL TELE-DIAGNOSIS AT 2G SPEEDS",
+    problem: "680M Indians in rural areas have access to only 2G cellular networks, making video-based telemedicine unreliable. Diagnostic accuracy drops 40% at sub-2Mbps.",
+    solution: "Build a low-bandwidth diagnostic interface using audio + keyframe streaming that maintains >85% diagnostic accuracy on 2G and works offline for 48 hours.",
+    xp: 420,
+    prize: "₹35,000",
+    participants: "3.8K",
+    score: "91%",
+    scoreLabel: "IMPACT",
+    deadline: "Apr 10, 2026",
+    daysLeft: 13,
+    diff: "Hard",
+    tags: ["tech","social"],
+    gradient: "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(239,68,68,0.35) 0%, transparent 55%), radial-gradient(ellipse 60% 60% at 10% 80%, rgba(190,18,60,0.3) 0%, transparent 60%), #0F0707",
+    pattern: "medical",
+    endorsers: [{i:"S",c:"#EC4899"},{i:"D",c:"#0EA5E9"}],
+    endorseCount: "3.8K",
+    insights: "720K",
+  },
+  {
+    id: 4,
+    category: "EDTECH",
+    catColor: "#FCD34D", catBg: "rgba(252,211,77,0.1)",
+    status: "OPEN CHALLENGE",
+    statusColor: "#1a1a00", statusBg: "linear-gradient(135deg,#D97706,#F59E0B)",
+    ref: "REF: ER-003",
+    company: "EduReach NGO", compEmoji: "📚", compRole: "PRODUCT LEAD",
+    compBg: "rgba(245,158,11,0.15)",
+    title: "OFFLINE-FIRST STEM LEARNING — GAMIFIED",
+    problem: "40% of Indian government school students have zero reliable internet access. Existing EdTech products require constant connectivity, making them useless in rural classrooms.",
+    solution: "Build a PWA quiz engine with RPG-style XP mechanics that works fully offline, syncs when connected, and runs smoothly on a ₹5,000 Android phone.",
+    xp: 380,
+    prize: "₹20,000 + Job Offer",
+    participants: "4.1K",
+    score: "86%",
+    scoreLabel: "REACH",
+    deadline: "Apr 22, 2026",
+    daysLeft: 25,
+    diff: "Medium",
+    tags: ["tech","design"],
+    gradient: "radial-gradient(ellipse 70% 70% at 80% 20%, rgba(245,158,11,0.4) 0%, transparent 55%), radial-gradient(ellipse 80% 50% at 0% 80%, rgba(180,83,9,0.35) 0%, transparent 60%), #0F0A00",
+    pattern: "stars",
+    endorsers: [{i:"L",c:"#F97316"},{i:"R",c:"#A78BFA"},{i:"M",c:"#EC4899"}],
+    endorseCount: "4.1K",
+    insights: "1.5M",
+  },
+];
+
+/* ── Render Challenge Feed ───────────────────────────────── */
+let currentFilter = 'all';
+
+function diffClass(d) {
+  return d === 'Easy' ? 'tag--easy' : d === 'Medium' ? 'tag--medium' : 'tag--hard';
+}
+
+function renderChallenges(list) {
+  const feed = document.getElementById('challenge-feed');
+  if (!list.length) {
+    feed.innerHTML = `<div style="text-align:center;padding:4rem;color:var(--text-muted)">No challenges in this category right now.</div>`;
+    return;
+  }
+  feed.innerHTML = list.map(c => `
+    <div class="ch-card">
+
+      <!-- Hero Area -->
+      <div class="ch-hero">
+        <!-- Gradient canvas (no real imgs needed) -->
+        <div class="ch-hero-canvas" style="background:${c.gradient}">
+          ${c.pattern === 'circuit' ? renderCircuit() : c.pattern === 'earth' ? renderEarth() : c.pattern === 'stars' ? renderStars() : renderPulse()}
+        </div>
+        <div class="ch-hero-overlay"></div>
+
+        <!-- Badges -->
+        <div class="ch-hero-badges">
+          <span class="ch-status-badge" style="background:${c.statusBg};color:${c.statusColor}">${c.status}</span>
+          <span class="ch-ref">${c.ref}</span>
+        </div>
+
+        <!-- Content overlaid on hero -->
+        <div class="ch-hero-content">
+          <div class="ch-company-row">
+            <div class="ch-company-logo" style="background:${c.compBg}">${c.compEmoji}</div>
+            <div class="ch-company-info">
+              <span class="ch-company-name">${c.company}</span>
+              <span class="ch-company-role">${c.compRole}</span>
+            </div>
+          </div>
+          <h2 class="ch-title">${c.title}</h2>
+          <div class="ch-hero-meta">
+            <div class="ch-meta-stat">
+              <span class="ch-meta-val">${c.participants}</span>
+              <span class="ch-meta-lbl">ENTRIES</span>
+            </div>
+            <div class="ch-meta-stat">
+              <span class="ch-meta-val gold">${c.score}</span>
+              <span class="ch-meta-lbl">${c.scoreLabel}</span>
+            </div>
+            <div class="ch-meta-stat">
+              <span class="ch-meta-val" style="color:var(--xp-gold-light)">${c.prize}</span>
+              <span class="ch-meta-lbl">PRIZE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="ch-body">
+        <div>
+          <div class="ch-col-label">PROBLEM</div>
+          <div class="ch-col-text">${c.problem}</div>
+        </div>
+        <div class="ch-col-divider">
+          <div class="ch-col-label">SOLUTION NEEDED</div>
+          <div class="ch-col-text">${c.solution}</div>
+        </div>
+        <div class="ch-actions">
+          <button class="ch-join-btn" onclick="joinChallenge(event,${c.id})">
+            ⚡ Join Challenge
+          </button>
+          <div class="ch-sub-btns">
+            <button class="ch-sub-btn">🔖 Save</button>
+            <button class="ch-sub-btn">🤝 Team Up</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.35rem;margin-top:0.25rem;">
+            <span class="tag ${diffClass(c.diff)}" style="font-size:0.7rem;padding:0.22rem 0.6rem;width:fit-content;">${c.diff}</span>
+            <span class="xp-badge" style="width:fit-content;">⚡ +${c.xp} XP</span>
+            <span class="countdown-pill${c.daysLeft <= 14 ? '' : ' ok'}">⏰ ${c.daysLeft}d left</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="ch-footer">
+        <div class="ch-footer-left">
+          <div class="ch-endorsers">
+            ${c.endorsers.map(e => `<div class="ch-endorser-av" style="background:${e.c}">${e.i}</div>`).join('')}
+            <div class="ch-endorser-more">+${parseInt(c.endorseCount)*100}</div>
+          </div>
+          <span class="ch-footer-stat">👍 ${c.endorseCount} Entries</span>
+          <span class="ch-footer-stat">👁 ${c.insights} Insights</span>
+          <span style="font-size:0.7rem;padding:0.18rem 0.55rem;border-radius:999px;background:${c.catBg};color:${c.catColor};border:1px solid;border-color:${c.catColor}30;font-weight:600;">${c.category}</span>
+        </div>
+        <button class="ch-view-btn" onclick="joinChallenge(event,${c.id})">VIEW DETAILED LAB LOG →</button>
+      </div>
+
+    </div>
+  `).join('');
+}
+
+/* ── SVG patterns for hero backgrounds ──────────────────── */
+function renderCircuit() {
+  return `<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.12" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="140" x2="380" y2="140" stroke="#818CF8" stroke-width="1"/>
+    <line x1="200" y1="0" x2="200" y2="280" stroke="#818CF8" stroke-width="1"/>
+    <circle cx="200" cy="140" r="40" fill="none" stroke="#A78BFA" stroke-width="1.5"/>
+    <circle cx="200" cy="140" r="70" fill="none" stroke="#818CF8" stroke-width="0.5" stroke-dasharray="4,6"/>
+    <circle cx="80" cy="60" r="6" fill="#818CF8"/><circle cx="320" cy="60" r="6" fill="#818CF8"/>
+    <circle cx="80" cy="220" r="6" fill="#818CF8"/><circle cx="320" cy="220" r="6" fill="#818CF8"/>
+    <line x1="80" y1="60" x2="80" y2="140" stroke="#818CF8" stroke-width="0.75"/>
+    <line x1="320" y1="60" x2="320" y2="140" stroke="#818CF8" stroke-width="0.75"/>
+  </svg>`;
+}
+function renderEarth() {
+  return `<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.1" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="200" cy="140" rx="120" ry="120" fill="none" stroke="#34D399" stroke-width="1.5"/>
+    <ellipse cx="200" cy="140" rx="120" ry="40" fill="none" stroke="#34D399" stroke-width="0.75"/>
+    <ellipse cx="200" cy="140" rx="60" ry="120" fill="none" stroke="#34D399" stroke-width="0.75"/>
+    <line x1="80" y1="140" x2="320" y2="140" stroke="#34D399" stroke-width="0.75"/>
+  </svg>`;
+}
+function renderStars() {
+  const pts = [[40,30],[180,50],[350,20],[60,200],[300,180],[200,140],[120,100],[280,80]];
+  const lines = '<line x1="40" y1="30" x2="180" y2="50" stroke="#FCD34D" stroke-width="0.5"/><line x1="180" y1="50" x2="350" y2="20" stroke="#FCD34D" stroke-width="0.5"/><line x1="180" y1="50" x2="200" y2="140" stroke="#FCD34D" stroke-width="0.5"/><line x1="200" y1="140" x2="280" y2="80" stroke="#FCD34D" stroke-width="0.5"/>';
+  return `<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.18" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+    ${pts.map(([x,y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#FCD34D"/>`).join('')}
+    ${lines}
+  </svg>`;
+}
+function renderPulse() {
+  return `<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.12" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="0,140 60,140 90,80 120,200 150,100 180,160 210,50 240,190 270,120 300,140 400,140" fill="none" stroke="#F87171" stroke-width="2"/>
+    <circle cx="210" cy="50" r="5" fill="#F87171"/>
+  </svg>`;
+}
+
+/* ── Filters / Tabs / Nav ────────────────────────────────── */
+function setFilter(f, btn) {
+  document.querySelectorAll('.cl-filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = f;
+  const list = f === 'all' ? CHALLENGES : CHALLENGES.filter(c => c.tags.includes(f));
+  renderChallenges(list);
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.cl-page-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`[onclick="switchTab('${tab}', this)"]`).classList.add('active');
+  document.querySelectorAll('.cl-panel').forEach(p => p.classList.remove('active'));
+  const map = { open: 'panel-open', sub: 'panel-sub', lb: 'panel-lb' };
+  document.getElementById(map[tab]).classList.add('active');
+}
+
+function navClick(el) {
+  document.querySelectorAll('.cl-nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setPeriod(btn) {
+  document.querySelectorAll('.lb-period-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Join Challenge ─────────────────────────────────────── */
+function joinChallenge(e, id) {
+  e.stopPropagation();
+  const ch = CHALLENGES.find(c => c.id === id);
+  if (!ch) return;
+  const btn = e.currentTarget;
+  if (btn.classList.contains('ch-join-btn')) {
+    btn.textContent = '✅ Joined!';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10B981)';
+    btn.disabled = true;
+    showToast(`You've joined "${ch.company}" challenge! ⚡ Good luck!`);
+  } else {
+    showToast(`Opening "${ch.title}" lab log…`);
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--bg-surface);border:1px solid rgba(16,185,129,0.4);border-radius:var(--radius-md);padding:1rem 1.5rem;font-size:0.875rem;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeUp 0.3s ease both;max-width:360px;`;
+  t.innerHTML = `✅ ${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+/* ── Leaderboard Data ────────────────────────────────────── */
+const LB_DATA = [
+  { rank:1, name:"Rahul Nair",     school:"NIT Trichy",        xp:4750, ch:7,  wins:3, lv:8,  move:"up",   color:"#F59E0B", init:"R" },
+  { rank:2, name:"Priya Menon",    school:"IIT Bombay",        xp:3820, ch:6,  wins:2, lv:6,  move:"same", color:"#0EA5E9", init:"P" },
+  { rank:3, name:"Arjun Sharma",   school:"IIT Bangalore",     xp:2450, ch:3,  wins:1, lv:5,  move:"up",   color:"#4F46E5", init:"A", me:true },
+  { rank:4, name:"Meera Varma",    school:"BITS Pilani",       xp:2280, ch:5,  wins:1, lv:5,  move:"down", color:"#7C3AED", init:"M" },
+  { rank:5, name:"David Kim",      school:"IISc Bangalore",    xp:2100, ch:4,  wins:0, lv:4,  move:"up",   color:"#14B8A6", init:"D" },
+  { rank:6, name:"Fatima Ahmed",   school:"Jamia Millia",      xp:1950, ch:4,  wins:1, lv:4,  move:"same", color:"#EC4899", init:"F" },
+  { rank:7, name:"Rohan Tiwari",   school:"IIT Madras",        xp:1840, ch:3,  wins:0, lv:4,  move:"up",   color:"#F97316", init:"R" },
+  { rank:8, name:"Anjali Singh",   school:"Delhi University",  xp:1720, ch:5,  wins:1, lv:3,  move:"down", color:"#10B981", init:"A" },
+  { rank:9, name:"Kiran Patil",    school:"Pune University",   xp:1580, ch:3,  wins:0, lv:3,  move:"same", color:"#8B5CF6", init:"K" },
+  { rank:10,name:"Lakshmi Prasad", school:"Anna University",   xp:1410, ch:2,  wins:0, lv:3,  move:"up",   color:"#6366F1", init:"L" },
+];
+
+function renderLeaderboard() {
+  const tbody = document.getElementById('lb-tbody');
+  const moveSymbol = m => m === 'up' ? '↑ Up' : m === 'down' ? '↓ Down' : '→ Same';
+  tbody.innerHTML = LB_DATA.map(p => `
+    <tr class="${p.me ? 'me' : ''}">
+      <td><span class="lb-rank-num ${p.rank <= 3 ? 'top3' : ''}">${p.rank}</span></td>
+      <td>
+        <div class="lb-player">
+          <div class="lb-av" style="background:${p.color}">${p.init}</div>
+          <div class="lb-player-info">
+            <span class="lb-player-name">${p.name}${p.me ? ' <span style="font-size:0.65rem;color:var(--indigo-light);">(You)</span>' : ''}</span>
+            <span class="lb-player-school">${p.school}</span>
+          </div>
+        </div>
+      </td>
+      <td><span class="lb-xp-val">⚡ ${p.xp.toLocaleString()}</span></td>
+      <td><span class="lb-challenges">${p.ch} entered</span></td>
+      <td><span class="lb-wins">🏆 ${p.wins}</span></td>
+      <td><span class="lb-level">Lv ${p.lv}</span></td>
+      <td><span class="lb-move ${p.move}">${moveSymbol(p.move)}</span></td>
+    </tr>
+  `).join('');
+}
+
+/* ── Growth Chart ────────────────────────────────────────── */
+function renderGrowthChart() {
+  const heights = [22,35,28,50,38,60,45,78,52,88,65,72,90,58,80,95,70,100,82,68,88,75,92,85,98];
+  const chart = document.getElementById('growth-chart');
+  chart.innerHTML = heights.map((h,i) =>
+    `<div class="gc-bar${h===100?' hi':h<30?' lo':''}" style="height:${h}%"></div>`
+  ).join('');
+}
+
+/* ── Init ────────────────────────────────────────────────── */
+renderChallenges(CHALLENGES);
+renderLeaderboard();
+renderGrowthChart();
+</script>
+</body>
+</html>

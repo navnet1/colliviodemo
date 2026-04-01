@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillForge — Profile</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    /* ── Page Shell ─────────────────────────────────────────── */
+    .profile-page {
+      padding-top: 64px;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    /* ── Cover Banner ───────────────────────────────────────── */
+    .cover-banner {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 120% at 0% 50%, rgba(79,70,229,0.35) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 100% at 100% 0%, rgba(192,38,211,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 80% at 50% 100%, rgba(124,58,237,0.2) 0%, transparent 60%),
+        var(--bg-surface);
+    }
+    .cover-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .cover-banner__edit {
+      position: absolute;
+      top: 1rem; right: 1.5rem;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-sm);
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .cover-banner__edit:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .profile-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 2rem;
+      align-items: start;
+    }
+    .profile-main { display: flex; flex-direction: column; gap: 1.5rem; }
+    .profile-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* ── Identity Card ──────────────────────────────────────── */
+    .identity-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 0 2rem 2rem;
+      position: relative;
+      margin-top: -80px;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .identity-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Avatar */
+    .profile-avatar-wrap {
+      position: relative;
+      margin-top: -48px;
+    }
+    .profile-avatar {
+      width: 110px; height: 110px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--indigo) 0%, var(--violet) 50%, var(--fuchsia) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      border: 4px solid var(--bg-card);
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 1px var(--border), 0 8px 32px rgba(79,70,229,0.4);
+    }
+    .profile-avatar__online {
+      position: absolute;
+      bottom: 6px; right: 6px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--success);
+      border: 3px solid var(--bg-card);
+      z-index: 2;
+    }
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: 2px; right: 2px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--indigo);
+      border: 2px solid var(--bg-card);
+      color: #fff;
+      font-size: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 3;
+      transition: background 0.2s;
+    }
+    .avatar-edit-btn:hover { background: var(--violet); }
+
+    /* Action buttons top-right */
+    .identity-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 1rem;
+    }
+
+    /* Name & Meta */
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.3rem;
+    }
+    .profile-handle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .profile-handle span { color: var(--indigo-light); }
+
+    /* Level + XP row */
+    .xp-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .level-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(124,58,237,0.2));
+      border: 1px solid rgba(124,58,237,0.4);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--violet-light);
+      letter-spacing: 0.02em;
+    }
+    .level-pill .lv-num {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--indigo-light), var(--violet-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .xp-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--xp-gold);
+    }
+    .xp-counter .xp-num {
+      font-family: var(--font-display);
+      font-size: 1rem;
+    }
+
+    /* XP Progress bar */
+    .xp-progress-wrap {
+      margin-bottom: 1.25rem;
+    }
+    .xp-progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 0.4rem;
+    }
+    .xp-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .xp-progress-fill {
+      height: 100%;
+      width: 68%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--indigo), var(--violet), var(--fuchsia));
+      position: relative;
+      overflow: hidden;
+    }
+    .xp-progress-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+      animation: shimmer 2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+
+    /* Bio */
+    .profile-bio {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Info chips */
+    .info-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .info-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .info-chip .ic { font-size: 0.85rem; }
+
+    /* Skills */
+    .skills-section { margin-bottom: 0; }
+    .skills-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .skills-title {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+    }
+    .skills-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
+      color: var(--indigo-light);
+      cursor: default;
+      transition: all 0.2s;
+    }
+    .skill-tag:hover {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      transform: translateY(-1px);
+    }
+    .skill-tag--violet {
+      background: rgba(124,58,237,0.08);
+      border-color: rgba(124,58,237,0.2);
+      color: var(--violet-light);
+    }
+    .skill-tag--violet:hover {
+      background: rgba(124,58,237,0.15);
+      border-color: rgba(124,58,237,0.4);
+    }
+    .skill-tag--gold {
+      background: rgba(245,158,11,0.08);
+      border-color: rgba(245,158,11,0.2);
+      color: var(--xp-gold-light);
+    }
+    .skill-tag--gold:hover {
+      background: rgba(245,158,11,0.15);
+      border-color: rgba(245,158,11,0.35);
+    }
+
+    /* ── Activity History ───────────────────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.75rem 2rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    .section-card:nth-child(2) { animation-delay: 0.15s; }
+    .section-card:nth-child(3) { animation-delay: 0.25s; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .section-count {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    /* Activity Filter Tabs */
+    .activity-tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .activity-tab {
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .activity-tab.active {
+      color: var(--indigo-light);
+      border-bottom-color: var(--indigo);
+    }
+    .activity-tab:hover:not(.active) { color: var(--text); }
+    .activity-tab .tab-count {
+      background: rgba(99,102,241,0.15);
+      color: var(--indigo-light);
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* Activity Grid */
+    .activity-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .activity-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .activity-card:hover {
+      border-color: var(--border-bright);
+      background: rgba(99,102,241,0.04);
+      transform: translateX(3px);
+    }
+
+    /* Activity icon */
+    .activity-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .activity-icon--task    { background: rgba(16,185,129,0.12); }
+    .activity-icon--comp    { background: rgba(245,158,11,0.12); }
+    .activity-icon--discuss { background: rgba(99,102,241,0.12); }
+
+    .activity-body { flex: 1; min-width: 0; }
+    .activity-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .activity-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .activity-org {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .activity-date {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .activity-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+    .xp-earned {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--xp-gold);
+    }
+    .activity-status {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+    }
+    .status--done    { background: rgba(16,185,129,0.12); color: #34D399; }
+    .status--rank    { background: rgba(245,158,11,0.12); color: #FCD34D; }
+    .status--active  { background: rgba(99,102,241,0.12); color: var(--indigo-light); }
+
+    /* ── Achievements ───────────────────────────────────────── */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+    .achievement-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 0.5rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      text-align: center;
+      cursor: default;
+      transition: all 0.25s;
+      position: relative;
+    }
+    .achievement-item:hover {
+      border-color: var(--border-bright);
+      background: rgba(99,102,241,0.05);
+      transform: translateY(-3px);
+    }
+    .achievement-item.locked {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+    .achievement-emoji { font-size: 1.75rem; }
+    .achievement-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    .achievement-item .lock-icon {
+      position: absolute;
+      top: 0.4rem; right: 0.4rem;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+
+    /* ── Sidebar Cards ──────────────────────────────────────── */
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    .sidebar-card:nth-child(1) { animation-delay: 0.2s; }
+    .sidebar-card:nth-child(2) { animation-delay: 0.3s; }
+    .sidebar-card:nth-child(3) { animation-delay: 0.4s; }
+
+    .sidebar-title {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1.1rem;
+    }
+
+    /* Quick Stats */
+    .stat-rows { display: flex; flex-direction: column; gap: 0.85rem; }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-row-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .stat-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .stat-icon--green  { background: rgba(16,185,129,0.12); }
+    .stat-icon--gold   { background: rgba(245,158,11,0.12); }
+    .stat-icon--indigo { background: rgba(99,102,241,0.12); }
+    .stat-icon--violet { background: rgba(124,58,237,0.12); }
+
+    .stat-row-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .stat-row-value {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    /* Rank Card */
+    .rank-display {
+      text-align: center;
+      padding: 0.5rem 0 0.75rem;
+    }
+    .rank-number {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--xp-gold), var(--xp-gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+    .rank-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .rank-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--success);
+      margin-top: 0.5rem;
+    }
+
+    /* Streak */
+    .streak-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+    }
+    .streak-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .streak-flame { font-size: 2rem; animation: float 2s ease-in-out infinite; }
+    .streak-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
+
+    /* Streak mini calendar */
+    .streak-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-top: 0.75rem;
+    }
+    .streak-day {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.04);
+    }
+    .streak-day.active { background: var(--indigo); }
+    .streak-day.today  { background: var(--violet); box-shadow: 0 0 8px rgba(124,58,237,0.6); }
+
+    /* Who's viewing */
+    .viewers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .viewer-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .viewer-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .viewer-info { flex: 1; min-width: 0; }
+    .viewer-name { font-size: 0.8rem; font-weight: 500; color: var(--text); }
+    .viewer-role { font-size: 0.72rem; color: var(--text-dim); }
+    .viewer-time { font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+        padding: 0 1rem 3rem;
+      }
+      .profile-sidebar { order: -1; }
+      .achievements-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .achievements-grid { grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+      .identity-card { padding: 0 1rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <span class="navbar__logo">⚡ SkillForge</span>
+  <ul class="navbar__links">
+    <li><a href="profile.html" class="active">Profile</a></li>
+    <li><a href="skill-bridge.html">Skill Bridge</a></li>
+    <li><a href="research-hub.html">Research Hub</a></li>
+    <li><a href="challenge-lab.html">Challenge Lab</a></li>
+  </ul>
+  <div class="navbar__xp">⚡ <span>2,450 XP</span></div>
+</nav>
+
+<div class="profile-page">
+
+  <!-- ── Cover ─────────────────────────────────────────────── -->
+  <div class="cover-banner">
+    <button class="cover-banner__edit">✏️ Edit Cover</button>
+  </div>
+
+  <!-- ── Layout ────────────────────────────────────────────── -->
+  <div class="profile-layout">
+
+    <!-- ════════ MAIN COLUMN ════════ -->
+    <div class="profile-main">
+
+      <!-- Identity Card -->
+      <div class="identity-card">
+        <div class="identity-top">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar">A</div>
+            <div class="profile-avatar__online"></div>
+            <button class="avatar-edit-btn" title="Change photo">✏</button>
+          </div>
+          <div class="identity-actions">
+            <button class="btn btn--outline btn--sm">✉ Message</button>
+            <button class="btn btn--primary btn--sm">⚙ Edit Profile</button>
+          </div>
+        </div>
+
+        <!-- Name & Handle -->
+        <h1 class="profile-name">Arjun Sharma</h1>
+        <p class="profile-handle">@arjunsharma · <span>IIT Bangalore, CS '26</span></p>
+
+        <!-- XP Row -->
+        <div class="xp-row">
+          <div class="level-pill">
+            <span>🏆</span>
+            <span>Level <span class="lv-num">5</span></span>
+            <span style="color:var(--text-dim);font-weight:400;">—</span>
+            <span>Rising Star</span>
+          </div>
+          <div class="xp-counter">
+            ⚡ <span class="xp-num">2,450</span> XP
+          </div>
+          <div class="tag tag--easy">Top 8%</div>
+        </div>
+
+        <!-- XP Progress -->
+        <div class="xp-progress-wrap">
+          <div class="xp-progress-labels">
+            <span>Level 5 — 2,450 XP</span>
+            <span>Level 6 at 3,000 XP &nbsp;·&nbsp; 550 to go</span>
+          </div>
+          <div class="xp-progress-bar">
+            <div class="xp-progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <p class="profile-bio">
+          CS undergrad passionate about building tools that actually matter. I work at the intersection of AI and social good — currently exploring NLP for low-resource languages. Open to research collabs, NGO problem-solving, and anything that earns XP 🚀
+        </p>
+
+        <!-- Info chips -->
+        <div class="info-chips">
+          <span class="info-chip"><span class="ic">📍</span> Bangalore, India</span>
+          <span class="info-chip"><span class="ic">🎓</span> IIT Bangalore</span>
+          <span class="info-chip"><span class="ic">💼</span> Open to internships</span>
+          <span class="info-chip"><span class="ic">🔗</span> github.com/arjunsharma</span>
+        </div>
+
+        <!-- Skills -->
+        <div class="skills-section">
+          <div class="skills-header">
+            <span class="skills-title">Skills</span>
+            <button class="btn btn--ghost btn--sm">+ Add skill</button>
+          </div>
+          <div class="skills-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">NLP</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag--violet skill-tag">Data Analysis</span>
+            <span class="skill-tag--violet skill-tag">Figma</span>
+            <span class="skill-tag--violet skill-tag">Node.js</span>
+            <span class="skill-tag--gold skill-tag">Research</span>
+            <span class="skill-tag--gold skill-tag">Technical Writing</span>
+            <span class="skill-tag">SQL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Achievements ─────────────────────────────────── -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">🏅 Achievements</h2>
+          <span class="section-count">7 / 24 unlocked</span>
+        </div>
+        <div class="achievements-grid">
+          <div class="achievement-item">
+            <span class="achievement-emoji">🚀</span>
+            <span class="achievement-name">First Task</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">🔥</span>
+            <span class="achievement-name">7-Day Streak</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">💡</span>
+            <span class="achievement-name">Idea Poster</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">🎯</span>
+            <span class="achievement-name">Challenge Win</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">🌍</span>
+            <span class="achievement-name">NGO Helper</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">⚡</span>
+            <span class="achievement-name">XP Hunter</span>
+          </div>
+          <div class="achievement-item">
+            <span class="achievement-emoji">🤝</span>
+            <span class="achievement-name">Collaborator</span>
+          </div>
+          <div class="achievement-item locked">
+            <span class="lock-icon">🔒</span>
+            <span class="achievement-emoji">👑</span>
+            <span class="achievement-name">Top 1%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Activity History ─────────────────────────────── -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">📋 Activity History</h2>
+          <button class="btn btn--ghost btn--sm">View all</button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="activity-tabs">
+          <button class="activity-tab active" onclick="filterActivity('all', this)">
+            All <span class="tab-count">18</span>
+          </button>
+          <button class="activity-tab" onclick="filterActivity('task', this)">
+            Tasks <span class="tab-count">12</span>
+          </button>
+          <button class="activity-tab" onclick="filterActivity('comp', this)">
+            Competitions <span class="tab-count">3</span>
+          </button>
+          <button class="activity-tab" onclick="filterActivity('discuss', this)">
+            Discussions <span class="tab-count">3</span>
+          </button>
+        </div>
+
+        <!-- Activity Items -->
+        <div class="activity-grid" id="activity-grid">
+
+          <div class="activity-card" data-type="task">
+            <div class="activity-icon activity-icon--task">✅</div>
+            <div class="activity-body">
+              <div class="activity-title">Build NLP pipeline for sentiment analysis on Hindi tweets</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 Prayas NGO</span>
+                <span class="activity-date">Mar 20, 2026</span>
+                <span class="tag tag--easy" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Easy</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +220 XP</span>
+              <span class="activity-status status--done">Completed</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="comp">
+            <div class="activity-icon activity-icon--comp">🏆</div>
+            <div class="activity-body">
+              <div class="activity-title">Smart India Hackathon — AI for Rural Healthcare</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 Govt. of India</span>
+                <span class="activity-date">Mar 14, 2026</span>
+                <span class="tag tag--hard" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Hard</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +500 XP</span>
+              <span class="activity-status status--rank">🥈 Rank 2</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="discuss">
+            <div class="activity-icon activity-icon--discuss">💬</div>
+            <div class="activity-body">
+              <div class="activity-title">Discussion: "Is GPT-4 really good for code generation?"</div>
+              <div class="activity-meta">
+                <span class="activity-org">💬 Research Hub</span>
+                <span class="activity-date">Mar 10, 2026</span>
+                <span class="tag tag--research" style="font-size:0.68rem;padding:0.15rem 0.5rem;">AI</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +30 XP</span>
+              <span class="activity-status status--active">47 replies</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="task">
+            <div class="activity-icon activity-icon--task">✅</div>
+            <div class="activity-body">
+              <div class="activity-title">Design dashboard UI for water quality monitoring system</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 WaterAid India</span>
+                <span class="activity-date">Mar 3, 2026</span>
+                <span class="tag tag--medium" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Medium</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +180 XP</span>
+              <span class="activity-status status--done">Completed</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="comp">
+            <div class="activity-icon activity-icon--comp">🏆</div>
+            <div class="activity-body">
+              <div class="activity-title">FinTech Open Challenge — Micro-lending Risk Model</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 PayNXT Startup</span>
+                <span class="activity-date">Feb 24, 2026</span>
+                <span class="tag tag--medium" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Medium</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +350 XP</span>
+              <span class="activity-status status--rank">🥇 Rank 1</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="task">
+            <div class="activity-icon activity-icon--task">✅</div>
+            <div class="activity-body">
+              <div class="activity-title">Write technical documentation for open-source climate API</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 ClimateCode</span>
+                <span class="activity-date">Feb 15, 2026</span>
+                <span class="tag tag--easy" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Easy</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +100 XP</span>
+              <span class="activity-status status--done">Completed</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="discuss">
+            <div class="activity-icon activity-icon--discuss">💬</div>
+            <div class="activity-body">
+              <div class="activity-title">Thread: "Best resources for learning Rust in 2026?"</div>
+              <div class="activity-meta">
+                <span class="activity-org">💬 Research Hub</span>
+                <span class="activity-date">Feb 9, 2026</span>
+                <span class="tag tag--startup" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Dev</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +25 XP</span>
+              <span class="activity-status status--active">22 replies</span>
+            </div>
+          </div>
+
+          <div class="activity-card" data-type="task">
+            <div class="activity-icon activity-icon--task">✅</div>
+            <div class="activity-body">
+              <div class="activity-title">Build a REST API for student volunteer tracking app</div>
+              <div class="activity-meta">
+                <span class="activity-org">🏢 Yuva Foundation</span>
+                <span class="activity-date">Jan 28, 2026</span>
+                <span class="tag tag--hard" style="font-size:0.68rem;padding:0.15rem 0.5rem;">Hard</span>
+              </div>
+            </div>
+            <div class="activity-right">
+              <span class="xp-earned">⚡ +300 XP</span>
+              <span class="activity-status status--done">Completed</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /profile-main -->
+
+    <!-- ════════ SIDEBAR ════════ -->
+    <aside class="profile-sidebar">
+
+      <!-- Quick Stats -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Quick Stats</div>
+        <div class="stat-rows">
+          <div class="stat-row">
+            <div class="stat-row-left">
+              <div class="stat-icon stat-icon--green">✅</div>
+              <span class="stat-row-label">Tasks Completed</span>
+            </div>
+            <span class="stat-row-value">12</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-row-left">
+              <div class="stat-icon stat-icon--gold">🏆</div>
+              <span class="stat-row-label">Challenges Won</span>
+            </div>
+            <span class="stat-row-value">3</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-row-left">
+              <div class="stat-icon stat-icon--indigo">💬</div>
+              <span class="stat-row-label">Discussions Started</span>
+            </div>
+            <span class="stat-row-value">8</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-row-left">
+              <div class="stat-icon stat-icon--violet">👁</div>
+              <span class="stat-row-label">Profile Views</span>
+            </div>
+            <span class="stat-row-value">341</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-row-left">
+              <div class="stat-icon stat-icon--gold">⚡</div>
+              <span class="stat-row-label">Total XP Earned</span>
+            </div>
+            <span class="stat-row-value" style="color:var(--xp-gold)">2,450</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Rank -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Global Rank</div>
+        <div class="rank-display">
+          <div class="rank-number">#42</div>
+          <div class="rank-label">among 14,200+ students</div>
+          <div class="rank-change">↑ Moved up 11 places this week</div>
+        </div>
+      </div>
+
+      <!-- Streak -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Activity Streak</div>
+        <div class="streak-display">
+          <span class="streak-flame">🔥</span>
+          <div>
+            <div class="streak-num">7</div>
+            <div class="streak-sub">days in a row</div>
+          </div>
+        </div>
+        <div class="streak-calendar" id="streak-cal"></div>
+      </div>
+
+      <!-- Who's Viewing -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Who Viewed You</div>
+        <div class="viewers">
+          <div class="viewer-row">
+            <div class="viewer-avatar">R</div>
+            <div class="viewer-info">
+              <div class="viewer-name">Recruiter · TechCorps</div>
+              <div class="viewer-role">via Challenge Lab</div>
+            </div>
+            <span class="viewer-time">2h ago</span>
+          </div>
+          <div class="viewer-row">
+            <div class="viewer-avatar" style="background:linear-gradient(135deg,#059669,#10B981)">P</div>
+            <div class="viewer-info">
+              <div class="viewer-name">Priya M. · Prayas NGO</div>
+              <div class="viewer-role">via Skill Bridge</div>
+            </div>
+            <span class="viewer-time">5h ago</span>
+          </div>
+          <div class="viewer-row">
+            <div class="viewer-avatar" style="background:linear-gradient(135deg,#D97706,#F59E0B)">K</div>
+            <div class="viewer-info">
+              <div class="viewer-name">Karan S. · Startup</div>
+              <div class="viewer-role">via Research Hub</div>
+            </div>
+            <span class="viewer-time">1d ago</span>
+          </div>
+          <div class="viewer-row">
+            <div class="viewer-avatar" style="background:linear-gradient(135deg,#7C3AED,#C026D3)">A</div>
+            <div class="viewer-info">
+              <div class="viewer-name">Ananya R. · Student</div>
+              <div class="viewer-role">via leaderboard</div>
+            </div>
+            <span class="viewer-time">2d ago</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div><!-- /profile-layout -->
+</div><!-- /profile-page -->
+
+<script>
+  /* ── Activity filter ──────────────────────────────────────── */
+  function filterActivity(type, btn) {
+    document.querySelectorAll('.activity-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.activity-card').forEach(card => {
+      card.style.display = (type === 'all' || card.dataset.type === type) ? 'flex' : 'none';
+    });
+  }
+
+  /* ── Streak calendar ─────────────────────────────────────── */
+  (function buildStreak() {
+    const cal = document.getElementById('streak-cal');
+    // last 14 days; active last 7 + today
+    const active = new Set([7,8,9,10,11,12,13]);
+    for (let i = 0; i < 14; i++) {
+      const d = document.createElement('div');
+      d.className = 'streak-day' + (i === 13 ? ' today' : active.has(i) ? ' active' : '');
+      cal.appendChild(d);
+    }
+  })();
+
+  /* ── XP counter animation ────────────────────────────────── */
+  (function animateXP() {
+    const target = 2450;
+    const el = document.querySelector('.xp-num');
+    if (!el) return;
+    let start = 0;
+    const step = Math.ceil(target / 60);
+    const id = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = start.toLocaleString();
+      if (start >= target) clearInterval(id);
+    }, 16);
+  })();
+</script>
+</body>
+</html>

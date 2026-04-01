@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillForge — Teen Research Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    /* ── Root overrides for this page ───────────────────────── */
+    body { overflow-x: hidden; }
+
+    /* ── App Shell (fixed top navbar already in styles.css) ─── */
+    .rh-shell {
+      display: grid;
+      grid-template-columns: 220px 1fr 280px;
+      min-height: calc(100vh - 64px);
+      margin-top: 64px;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       LEFT SIDEBAR
+    ════════════════════════════════════════════════════════════ */
+    .rh-leftnav {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 0;
+      gap: 0.25rem;
+    }
+    .rh-leftnav::-webkit-scrollbar { width: 0; }
+
+    .rh-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.25rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0.5rem;
+    }
+    .rh-nav-brand__icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .rh-nav-brand__text { display: flex; flex-direction: column; gap: 0.05rem; }
+    .rh-nav-brand__name {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .rh-nav-brand__sub {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .rh-nav-section {
+      padding: 0 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+    .rh-nav-section-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      padding: 0.5rem 0.5rem 0.35rem;
+      display: block;
+    }
+
+    .rh-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.845rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .rh-nav-item:hover {
+      background: rgba(99,102,241,0.07);
+      color: var(--text);
+    }
+    .rh-nav-item.active {
+      background: rgba(99,102,241,0.14);
+      border-color: rgba(99,102,241,0.22);
+      color: var(--indigo-light);
+    }
+    .rh-nav-item .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .rh-nav-badge {
+      margin-left: auto;
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(99,102,241,0.2);
+      color: var(--indigo-light);
+    }
+    .rh-nav-badge.red {
+      background: rgba(239,68,68,0.15);
+      color: #FCA5A5;
+    }
+
+    .rh-nav-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0.6rem 1.25rem;
+    }
+
+    .rh-nav-bottom {
+      margin-top: auto;
+      padding: 0 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       MAIN CONTENT
+    ════════════════════════════════════════════════════════════ */
+    .rh-main {
+      min-width: 0;
+      background: var(--bg);
+      padding: 2rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    /* ── Page Header ─────────────────────────────────────────── */
+    .rh-page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.4s ease both;
+    }
+    .rh-page-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+    .rh-page-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .rh-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .rh-live-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #34D399;
+    }
+    .rh-live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #34D399;
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    /* ── Active Researchers Row ─────────────────────────────── */
+    .rh-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rh-section-label a {
+      color: var(--indigo-light);
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .rh-section-label a:hover { color: var(--violet-light); }
+
+    .rh-researchers-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      animation: fadeUp 0.4s 0.05s ease both;
+    }
+    .researcher-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .researcher-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(79,70,229,0.12);
+    }
+    .rc-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .rc-online {
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #34D399;
+      border: 2px solid var(--bg-card);
+    }
+    .rc-info { flex: 1; min-width: 0; }
+    .rc-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rc-match {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .rc-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .rc-tag {
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      background: rgba(99,102,241,0.12);
+      color: var(--indigo-light);
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+
+    /* ── View Toggle ─────────────────────────────────────────── */
+    .rh-feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .view-toggle {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.2rem;
+      gap: 0.15rem;
+    }
+    .view-btn {
+      width: 30px; height: 28px;
+      border-radius: 5px;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .view-btn.active {
+      background: rgba(99,102,241,0.15);
+      color: var(--indigo-light);
+    }
+    .feed-search-wrap {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+    .feed-search-icon {
+      position: absolute;
+      left: 0.75rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+    .feed-search {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2.1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: var(--font-body);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .feed-search::placeholder { color: var(--text-dim); }
+    .feed-search:focus { border-color: var(--indigo); }
+
+    /* ── Feed Tabs ───────────────────────────────────────────── */
+    .rh-feed-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: -1px;
+    }
+    .rh-tab {
+      padding: 0.55rem 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .rh-tab.active {
+      color: var(--indigo-light);
+      border-bottom-color: var(--indigo);
+    }
+    .rh-tab:hover:not(.active) { color: var(--text); }
+    .rh-tab-count {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.38rem;
+      border-radius: 999px;
+      background: rgba(99,102,241,0.15);
+      color: var(--indigo-light);
+    }
+
+    /* ── Thread Grid ─────────────────────────────────────────── */
+    .thread-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      animation: fadeUp 0.4s 0.1s ease both;
+    }
+    .thread-grid.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    /* Thread Card */
+    .th-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .th-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.03), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .th-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(79,70,229,0.12);
+    }
+    .th-card:hover::after { opacity: 1; }
+
+    .th-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .th-topic-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.22rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+    .th-date {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .th-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .th-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    /* Thread Footer */
+    .th-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .th-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .th-author-av {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .th-author-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .th-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .th-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .th-upvote-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .th-upvote-btn:hover,
+    .th-upvote-btn.voted {
+      background: rgba(99,102,241,0.12);
+      border-color: rgba(99,102,241,0.3);
+      color: var(--indigo-light);
+    }
+
+    /* ── Collab Canvas ───────────────────────────────────────── */
+    .collab-section { animation: fadeUp 0.4s 0.2s ease both; }
+    .collab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 0.85rem;
+    }
+    .collab-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .collab-card:hover { border-color: var(--border-bright); }
+    .collab-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: rgba(99,102,241,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .collab-info { flex: 1; min-width: 0; }
+    .collab-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .collab-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    .collab-live {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #34D399;
+      white-space: nowrap;
+    }
+    .collab-live .live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #34D399;
+      animation: pulse-glow 1.5s infinite;
+    }
+    .collab-editing {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RIGHT SIDEBAR
+    ════════════════════════════════════════════════════════════ */
+    .rh-rightnav {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .rh-rightnav::-webkit-scrollbar { width: 0; }
+
+    /* Rank Card */
+    .rank-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem;
+    }
+    .rank-card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.85rem;
+    }
+    .rank-card-title span { font-size: 0.9rem; }
+
+    .rank-hero {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .rank-lv-badge {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      flex-shrink: 0;
+    }
+    .rank-lv-badge .lv { font-size: 0.55rem; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; }
+    .rank-lv-badge .num { font-size: 1.1rem; font-weight: 800; color: #fff; line-height: 1; }
+
+    .rank-title-group { flex: 1; }
+    .rank-title-text {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .rank-title-sub { font-size: 0.68rem; color: var(--text-dim); }
+    .rank-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+    }
+    .rank-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .rank-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--indigo), var(--violet));
+      width: 68%;
+    }
+    .rank-pct { font-size: 0.65rem; font-weight: 700; color: var(--indigo-light); }
+
+    .rank-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    .rs { text-align: center; }
+    .rs-val {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+      display: block;
+    }
+    .rs-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .rank-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .rb-item {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      cursor: default;
+      transition: transform 0.2s;
+    }
+    .rb-item:hover { transform: scale(1.15); }
+
+    /* Trending Topics */
+    .rs-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .trending-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .trending-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .trending-item:hover {
+      border-color: var(--border-bright);
+      background: rgba(99,102,241,0.06);
+    }
+    .trending-rank {
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      width: 18px;
+      flex-shrink: 0;
+    }
+    .trending-rank.top { color: var(--xp-gold); }
+    .trending-info { flex: 1; min-width: 0; }
+    .trending-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .trending-count { font-size: 0.68rem; color: var(--text-dim); }
+    .trending-arrow { font-size: 0.65rem; color: var(--success); font-weight: 700; }
+    .trending-arrow.down { color: var(--danger); }
+
+    /* Most Active Threads */
+    .active-threads { display: flex; flex-direction: column; gap: 0.65rem; }
+    .at-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s;
+    }
+    .at-item:hover { background: rgba(255,255,255,0.03); }
+    .at-num {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.06);
+      flex-shrink: 0;
+      width: 22px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+    .at-info { flex: 1; min-width: 0; }
+    .at-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 0.2rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .at-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .at-comments { font-size: 0.68rem; color: var(--text-dim); }
+
+    /* Network Activity mini chart */
+    .network-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+    }
+    .network-chart {
+      height: 60px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      margin: 0.75rem 0 0.5rem;
+    }
+    .nc-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      background: rgba(99,102,241,0.2);
+      transition: background 0.2s;
+      min-height: 4px;
+    }
+    .nc-bar:hover { background: rgba(99,102,241,0.5); }
+    .nc-bar.accent { background: rgba(124,58,237,0.5); }
+    .network-stats {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .ns-val {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .ns-label { font-size: 0.7rem; color: var(--text-dim); }
+    .ns-growth {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--success);
+      margin-left: auto;
+    }
+
+    /* Open Archive card */
+    .archive-card {
+      background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.1));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+    }
+    .archive-card h4 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .archive-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem; }
+
+    /* ════════════════════════════════════════════════════════════
+       THREAD DETAIL PANEL (slide-in overlay)
+    ════════════════════════════════════════════════════════════ */
+    .thread-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      pointer-events: none;
+    }
+    .thread-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .thread-panel {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: min(680px, 100vw);
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-bright);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(.32,0,.15,1);
+      overflow: hidden;
+    }
+    .thread-overlay.open { pointer-events: all; }
+    .thread-overlay.open .thread-backdrop { opacity: 1; }
+    .thread-overlay.open .thread-panel { transform: translateX(0); }
+
+    .thread-panel-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo), var(--violet), var(--fuchsia));
+      flex-shrink: 0;
+    }
+    .thread-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      gap: 1rem;
+    }
+    .thread-panel-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .thread-panel-close:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #FCA5A5; }
+    .thread-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .thread-panel-body::-webkit-scrollbar { width: 4px; }
+    .thread-panel-body::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 999px; }
+
+    /* Thread full post */
+    .tp-post-header { margin-bottom: 1.25rem; }
+    .tp-post-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+      margin: 0.75rem 0 0.5rem;
+    }
+    .tp-post-body {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+    }
+    .tp-post-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .tp-action {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tp-action:hover { background: rgba(99,102,241,0.08); border-color: var(--border-bright); color: var(--indigo-light); }
+    .tp-action.voted { background: rgba(99,102,241,0.12); border-color: rgba(99,102,241,0.3); color: var(--indigo-light); }
+
+    /* Comments */
+    .comments-header {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .comment {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .comment-av {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .comment-body { flex: 1; }
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.35rem;
+    }
+    .comment-author {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .comment-time { font-size: 0.7rem; color: var(--text-dim); }
+    .comment-xp { font-size: 0.65rem; font-weight: 700; color: var(--xp-gold); }
+    .comment-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 0.4rem;
+    }
+    .comment-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .comment-act {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .comment-act:hover { color: var(--indigo-light); }
+
+    /* Nested reply */
+    .comment-nested {
+      margin-left: 1rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--border);
+    }
+
+    /* Reply box */
+    .reply-box {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .reply-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      min-height: 80px;
+    }
+    .reply-input:focus { border-color: var(--indigo); }
+    .reply-input::placeholder { color: var(--text-dim); }
+    .reply-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       NEW DISCUSSION MODAL
+    ════════════════════════════════════════════════════════════ */
+    .nd-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .nd-overlay.open { opacity: 1; pointer-events: all; }
+    .nd-modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 580px;
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      overflow: hidden;
+    }
+    .nd-overlay.open .nd-modal { transform: translateY(0) scale(1); }
+    .nd-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo), var(--violet), var(--fuchsia));
+    }
+    .nd-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nd-head h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .nd-close {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nd-close:hover { background: rgba(239,68,68,0.1); color: #FCA5A5; }
+    .nd-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .nd-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .nd-select {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .nd-select:focus { border-color: var(--indigo); }
+    .nd-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: var(--font-body);
+      resize: vertical;
+      outline: none;
+      min-height: 140px;
+      transition: border-color 0.2s;
+    }
+    .nd-textarea:focus { border-color: var(--indigo); }
+    .nd-textarea::placeholder { color: var(--text-dim); }
+    .nd-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      gap: 0.75rem;
+    }
+    .nd-tip { font-size: 0.72rem; color: var(--text-dim); }
+    .nd-tip span { color: var(--xp-gold); font-weight: 700; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .rh-shell { grid-template-columns: 200px 1fr 0; }
+      .rh-rightnav { display: none; }
+    }
+    @media (max-width: 800px) {
+      .rh-shell { grid-template-columns: 0 1fr 0; }
+      .rh-leftnav { display: none; }
+      .rh-main { padding: 1.25rem; }
+      .thread-grid { grid-template-columns: 1fr; }
+      .rh-researchers-row { grid-template-columns: 1fr 1fr; }
+      .collab-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Navbar ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <span class="navbar__logo">⚡ SkillForge</span>
+  <ul class="navbar__links">
+    <li><a href="profile.html">Profile</a></li>
+    <li><a href="skill-bridge.html">Skill Bridge</a></li>
+    <li><a href="research-hub.html" class="active">Research Hub</a></li>
+    <li><a href="challenge-lab.html">Challenge Lab</a></li>
+  </ul>
+  <div class="navbar__xp">⚡ <span>2,450 XP</span></div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     3-COLUMN SHELL
+════════════════════════════════════════════════════════════ -->
+<div class="rh-shell">
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <nav class="rh-leftnav">
+    <div class="rh-nav-brand">
+      <div class="rh-nav-brand__icon">💬</div>
+      <div class="rh-nav-brand__text">
+        <span class="rh-nav-brand__name">Research Hub</span>
+        <span class="rh-nav-brand__sub">Teen Innovators</span>
+      </div>
+    </div>
+
+    <div class="rh-nav-section">
+      <span class="rh-nav-section-label">Explore</span>
+      <div class="rh-nav-item active" onclick="setNav(this,'all')">
+        <span class="nav-icon">🏠</span> Feed
+        <span class="rh-nav-badge">New</span>
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'hot')">
+        <span class="nav-icon">🔥</span> Hot Today
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'new')">
+        <span class="nav-icon">✨</span> New
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'top')">
+        <span class="nav-icon">📈</span> Top This Week
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'jobs')">
+        <span class="nav-icon">💼</span> Linked to Jobs
+        <span class="rh-nav-badge">18</span>
+      </div>
+    </div>
+
+    <div class="rh-nav-divider"></div>
+
+    <div class="rh-nav-section">
+      <span class="rh-nav-section-label">My Space</span>
+      <div class="rh-nav-item" onclick="setNav(this,'my')">
+        <span class="nav-icon">📋</span> My Threads
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'saved')">
+        <span class="nav-icon">🔖</span> Saved
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'following')">
+        <span class="nav-icon">👥</span> Following
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'notifs')">
+        <span class="nav-icon">🔔</span> Notifications
+        <span class="rh-nav-badge red">4</span>
+      </div>
+    </div>
+
+    <div class="rh-nav-divider"></div>
+
+    <div class="rh-nav-section">
+      <span class="rh-nav-section-label">Topics</span>
+      <div class="rh-nav-item" onclick="setNav(this,'ai')">
+        <span class="nav-icon" style="color:#818CF8">●</span> AI & ML
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'sustainability')">
+        <span class="nav-icon" style="color:#34D399">●</span> Sustainability
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'health')">
+        <span class="nav-icon" style="color:#F87171">●</span> Health Tech
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'edtech')">
+        <span class="nav-icon" style="color:#FCD34D">●</span> EdTech
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'design')">
+        <span class="nav-icon" style="color:#A78BFA">●</span> Design
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'policy')">
+        <span class="nav-icon" style="color:#6EE7B7">●</span> Policy
+      </div>
+    </div>
+
+    <div class="rh-nav-bottom">
+      <div class="rh-nav-divider"></div>
+      <div class="rh-nav-item" onclick="setNav(this,'archive')">
+        <span class="nav-icon">📚</span> Research Archive
+      </div>
+      <div class="rh-nav-item" onclick="setNav(this,'settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="rh-main">
+
+    <!-- Page Header -->
+    <div class="rh-page-header">
+      <div>
+        <h1 class="rh-page-title">Innovation Dashboard</h1>
+        <p class="rh-page-sub">Unified view of your research threads, active discussions, and open collaborations.</p>
+      </div>
+      <div class="rh-header-actions">
+        <div class="rh-live-pill">
+          <span class="rh-live-dot"></span> 1.2K+ Live
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="font-size:0.75rem;color:var(--text-dim)">⚡ 4 New Replies</span>
+          <span style="font-size:0.75rem;color:var(--text-dim)">💬 3 Active Threads</span>
+        </div>
+        <button class="btn btn--primary" onclick="openNewDiscussion()">+ Start Discussion</button>
+      </div>
+    </div>
+
+    <!-- Recommended Collaborators -->
+    <div>
+      <div class="rh-section-label">
+        Recommended Collaborators
+        <a>View Global Network →</a>
+      </div>
+      <div class="rh-researchers-row">
+        <div class="researcher-card">
+          <div class="rc-avatar" style="background:linear-gradient(135deg,#4F46E5,#7C3AED)">
+            E
+            <div class="rc-online"></div>
+          </div>
+          <div class="rc-info">
+            <div class="rc-name">Elena Rodriguez</div>
+            <div class="rc-match" style="color:#34D399">95% Match</div>
+            <div class="rc-tags">
+              <span class="rc-tag">Sustainability</span>
+              <span class="rc-tag">Policy</span>
+            </div>
+          </div>
+        </div>
+        <div class="researcher-card">
+          <div class="rc-avatar" style="background:linear-gradient(135deg,#0EA5E9,#6366F1)">
+            D
+            <div class="rc-online"></div>
+          </div>
+          <div class="rc-info">
+            <div class="rc-name">David Kim</div>
+            <div class="rc-match" style="color:var(--violet-light)">Complementary</div>
+            <div class="rc-tags">
+              <span class="rc-tag">AI</span>
+              <span class="rc-tag">DataViz</span>
+            </div>
+          </div>
+        </div>
+        <div class="researcher-card">
+          <div class="rc-avatar" style="background:linear-gradient(135deg,#EC4899,#8B5CF6)">
+            S
+          </div>
+          <div class="rc-info">
+            <div class="rc-name">Sarah Jenkins</div>
+            <div class="rc-match" style="color:#FCD34D">88% Match</div>
+            <div class="rc-tags">
+              <span class="rc-tag">UX Design</span>
+              <span class="rc-tag">Psych</span>
+            </div>
+          </div>
+        </div>
+        <div class="researcher-card">
+          <div class="rc-avatar" style="background:linear-gradient(135deg,#14B8A6,#0EA5E9)">
+            J
+          </div>
+          <div class="rc-info">
+            <div class="rc-name">Julianna Chen</div>
+            <div class="rc-match" style="color:var(--indigo-light)">Project Lead</div>
+            <div class="rc-tags">
+              <span class="rc-tag">BioTech</span>
+              <span class="rc-tag">Logistics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Discussion Feed -->
+    <div>
+      <div class="rh-feed-header">
+        <div class="rh-section-label" style="margin:0">Active Research Feed</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;">
+          <div class="feed-search-wrap">
+            <span class="feed-search-icon">🔍</span>
+            <input class="feed-search" type="text" placeholder="Search discussions…" oninput="filterThreads(this.value)" />
+          </div>
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setView('grid',this)" title="Grid">⊞</button>
+            <button class="view-btn" onclick="setView('list',this)" title="List">☰</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feed Tabs -->
+      <div style="margin-top:1rem;margin-bottom:1.25rem;">
+        <div class="rh-feed-tabs">
+          <button class="rh-tab active" onclick="setTab('all',this)">All <span class="rh-tab-count">48</span></button>
+          <button class="rh-tab" onclick="setTab('ai',this)">AI & ML <span class="rh-tab-count">14</span></button>
+          <button class="rh-tab" onclick="setTab('sustainability',this)">Sustainability <span class="rh-tab-count">9</span></button>
+          <button class="rh-tab" onclick="setTab('health',this)">Health <span class="rh-tab-count">8</span></button>
+          <button class="rh-tab" onclick="setTab('edtech',this)">EdTech <span class="rh-tab-count">7</span></button>
+          <button class="rh-tab" onclick="setTab('other',this)">Other <span class="rh-tab-count">10</span></button>
+        </div>
+      </div>
+
+      <!-- Thread Grid -->
+      <div class="thread-grid" id="thread-grid"></div>
+    </div>
+
+    <!-- Real-time Collaboration Canvas -->
+    <div class="collab-section">
+      <div class="rh-section-label">
+        ⚡ Real-time Collaboration Canvas
+        <a>View All →</a>
+      </div>
+      <div class="collab-grid">
+        <div class="collab-card">
+          <div class="collab-icon">📝</div>
+          <div class="collab-info">
+            <div class="collab-name">Field Notes: Micro-climate data in Rajasthan</div>
+            <div class="collab-sub">Last edit 2m ago by Sarah</div>
+          </div>
+          <div class="collab-live"><span class="live-dot"></span> LIVE</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-icon">📊</div>
+          <div class="collab-info">
+            <div class="collab-name">Q3 Research Synthesis — AI Ethics India</div>
+            <div class="collab-sub collab-editing">Co-editing with 4 others</div>
+          </div>
+          <div class="collab-live"><span class="live-dot"></span> LIVE</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-icon">🗺️</div>
+          <div class="collab-info">
+            <div class="collab-name">GIS Mapping: Water Access Gaps — Pune</div>
+            <div class="collab-sub">Last edit 45m ago by Arjun</div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-dim);white-space:nowrap;">45m ago</div>
+        </div>
+        <div class="collab-card">
+          <div class="collab-icon">🧠</div>
+          <div class="collab-info">
+            <div class="collab-name">LLM Bias Literature Review — Draft v2</div>
+            <div class="collab-sub">Last edit 3h ago by Elena</div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-dim);white-space:nowrap;">3h ago</div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /rh-main -->
+
+  <!-- ═══ RIGHT SIDEBAR ═══ -->
+  <aside class="rh-rightnav">
+
+    <!-- Innovation Rank -->
+    <div class="rank-card">
+      <div class="rank-card-title">
+        Innovation Rank <span>🏆</span>
+      </div>
+      <div class="rank-hero">
+        <div class="rank-lv-badge">
+          <span class="lv">LV</span>
+          <span class="num">5</span>
+        </div>
+        <div class="rank-title-group">
+          <div class="rank-title-text">Elite Contributor</div>
+          <div class="rank-title-sub">Top 8% globally</div>
+          <div class="rank-bar-wrap">
+            <div class="rank-bar"><div class="rank-bar-fill"></div></div>
+            <span class="rank-pct">68%</span>
+          </div>
+        </div>
+      </div>
+      <div class="rank-stats">
+        <div class="rs"><span class="rs-val">7</span><span class="rs-label">Streak</span></div>
+        <div class="rs"><span class="rs-val">2.4K</span><span class="rs-label">XP</span></div>
+        <div class="rs"><span class="rs-val">8</span><span class="rs-label">Projects</span></div>
+      </div>
+      <div style="font-size:0.7rem;color:var(--text-dim);margin-top:0.75rem;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;">Recent Badges</div>
+      <div class="rank-badges">
+        <div class="rb-item" title="First Discussion">🚀</div>
+        <div class="rb-item" title="Idea Starter">💡</div>
+        <div class="rb-item" title="Top Commenter">🎯</div>
+        <div class="rb-item" title="7-Day Streak">🔥</div>
+        <div class="rb-item" title="Collaborator">🤝</div>
+      </div>
+    </div>
+
+    <!-- Trending Topics -->
+    <div>
+      <div class="rs-section-title">🔥 Trending Topics</div>
+      <div class="trending-list">
+        <div class="trending-item" onclick="filterByTopic('AI & Ethics')">
+          <span class="trending-rank top">#1</span>
+          <div class="trending-info">
+            <div class="trending-name">AI & Ethics</div>
+            <div class="trending-count">312 posts this week</div>
+          </div>
+          <span class="trending-arrow">↑ 24%</span>
+        </div>
+        <div class="trending-item" onclick="filterByTopic('Sustainability')">
+          <span class="trending-rank top">#2</span>
+          <div class="trending-info">
+            <div class="trending-name">Sustainability</div>
+            <div class="trending-count">247 posts this week</div>
+          </div>
+          <span class="trending-arrow">↑ 18%</span>
+        </div>
+        <div class="trending-item" onclick="filterByTopic('Neuroscience')">
+          <span class="trending-rank top">#3</span>
+          <div class="trending-info">
+            <div class="trending-name">Neuroscience</div>
+            <div class="trending-count">198 posts this week</div>
+          </div>
+          <span class="trending-arrow">↑ 11%</span>
+        </div>
+        <div class="trending-item" onclick="filterByTopic('E-Mobility')">
+          <span class="trending-rank">#4</span>
+          <div class="trending-info">
+            <div class="trending-name">E-Mobility</div>
+            <div class="trending-count">142 posts this week</div>
+          </div>
+          <span class="trending-arrow down">↓ 3%</span>
+        </div>
+        <div class="trending-item" onclick="filterByTopic('Global Health')">
+          <span class="trending-rank">#5</span>
+          <div class="trending-info">
+            <div class="trending-name">Global Health</div>
+            <div class="trending-count">134 posts this week</div>
+          </div>
+          <span class="trending-arrow">↑ 7%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Active Threads -->
+    <div>
+      <div class="rs-section-title">💬 Most Active Threads</div>
+      <div class="active-threads" id="active-threads-sidebar"></div>
+    </div>
+
+    <!-- Network Activity -->
+    <div class="network-box">
+      <div class="rs-section-title" style="margin-bottom:0">Network Activity</div>
+      <div class="network-chart" id="net-chart"></div>
+      <div class="network-stats">
+        <span class="ns-val">1.2K+</span>
+        <span class="ns-label">Live innovators</span>
+        <span class="ns-growth">+12% growth</span>
+      </div>
+    </div>
+
+    <!-- Open Archive -->
+    <div class="archive-card">
+      <h4>📚 Open Archive</h4>
+      <p>Access 4,000+ completed peer-reviewed papers, datasets, and research notes.</p>
+      <button class="btn btn--outline btn--sm btn--full">Explore Assets</button>
+    </div>
+
+  </aside>
+
+</div><!-- /rh-shell -->
+
+<!-- ══════════════════════════════════════════════════════════
+     THREAD DETAIL PANEL
+══════════════════════════════════════════════════════════ -->
+<div class="thread-overlay" id="thread-overlay">
+  <div class="thread-backdrop" onclick="closeThread()"></div>
+  <div class="thread-panel">
+    <div class="thread-panel-bar"></div>
+    <div class="thread-panel-head">
+      <div id="tp-header-meta" style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;"></div>
+      <button class="thread-panel-close" onclick="closeThread()">✕</button>
+    </div>
+    <div class="thread-panel-body">
+      <div class="tp-post-header">
+        <h2 class="tp-post-title" id="tp-title"></h2>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <div class="comment-av" id="tp-author-av" style="width:28px;height:28px;"></div>
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text)" id="tp-author-name"></span>
+          </div>
+          <span style="font-size:0.72rem;color:var(--text-dim)" id="tp-date"></span>
+          <span id="tp-xp-badge" class="xp-badge" style="font-size:0.68rem;padding:0.2rem 0.55rem;"></span>
+        </div>
+        <p class="tp-post-body" id="tp-body"></p>
+        <div class="tp-post-actions">
+          <button class="tp-action" onclick="this.classList.toggle('voted');this.querySelector('.va').textContent=this.classList.contains('voted')?'▲ '+( parseInt(this.querySelector('.va').textContent.replace('▲ ','').replace('▲',''))+1):this.querySelector('.va').textContent.replace('▲ ','▲ ')">
+            <span class="va" id="tp-upvotes">▲ 0</span>
+          </button>
+          <button class="tp-action">💬 <span id="tp-comment-count">0</span> Comments</button>
+          <button class="tp-action">🔗 Share</button>
+          <button class="tp-action">🔖 Save</button>
+        </div>
+      </div>
+      <div class="comments-header" id="tp-comments-title">Comments</div>
+      <div id="tp-comments"></div>
+    </div>
+    <div class="reply-box" style="padding:1rem 1.5rem;border-top:1px solid var(--border);">
+      <textarea class="reply-input" placeholder="Write a thoughtful reply… earn +5 XP for quality comments 💡" rows="3"></textarea>
+      <div class="reply-actions">
+        <button class="btn btn--ghost btn--sm">Cancel</button>
+        <button class="btn btn--primary btn--sm">Post Reply ⚡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     NEW DISCUSSION MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="nd-overlay" id="nd-overlay" onclick="if(event.target===this)closeNewDiscussion()">
+  <div class="nd-modal">
+    <div class="nd-bar"></div>
+    <div class="nd-head">
+      <h3>Start a New Discussion 💬</h3>
+      <button class="nd-close" onclick="closeNewDiscussion()">✕</button>
+    </div>
+    <div class="nd-body">
+      <div class="form-group">
+        <label class="form-label">Discussion Title</label>
+        <input class="form-input" type="text" placeholder="e.g. Is GPT-4 really good for code generation in 2026?" />
+      </div>
+      <div class="nd-row-2">
+        <div class="form-group">
+          <label class="form-label">Topic Tag</label>
+          <select class="nd-select">
+            <option>AI & ML</option>
+            <option>Sustainability</option>
+            <option>Neuroscience</option>
+            <option>E-Mobility</option>
+            <option>Global Health</option>
+            <option>EdTech</option>
+            <option>Cybersecurity</option>
+            <option>AgriTech</option>
+            <option>Policy</option>
+            <option>Design</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Linked Task (optional)</label>
+          <select class="nd-select">
+            <option value="">None</option>
+            <option>NLP Pipeline — Prayas NGO</option>
+            <option>Water Quality Dashboard</option>
+            <option>Crop Disease Detection</option>
+            <option>AI Bias Literature Review</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Body</label>
+        <textarea class="nd-textarea" placeholder="Share your thoughts, questions, or research findings. Good discussions earn XP and can be linked to open job tasks…"></textarea>
+      </div>
+    </div>
+    <div class="nd-footer">
+      <div class="nd-tip">Quality posts earn <span>+30 XP</span> when featured ⚡</div>
+      <div style="display:flex;gap:0.6rem;">
+        <button class="btn btn--ghost btn--sm" onclick="closeNewDiscussion()">Cancel</button>
+        <button class="btn btn--primary" onclick="submitDiscussion()">Post Discussion ⚡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════ -->
+<script>
+/* ── Data ──────────────────────────────────────────────────── */
+const THREADS = [
+  {
+    id:1,
+    tag:"AI & ETHICS", tagColor:"#818CF8", tagBg:"rgba(129,140,248,0.12)", tagBorder:"rgba(129,140,248,0.3)",
+    date:"Mar 26", title:"LLM Bias Mitigation in Regional Languages",
+    desc:"Developing open-source frameworks for real-time toxicity detection in Kannada, Tamil, and Telugu dialects. Sharing initial benchmarks — what approaches have worked for you?",
+    author:"Arjun S.", authorColor:"#4F46E5", authorInitial:"A",
+    upvotes:142, comments:38, xp:30,
+    openFor:"OPEN: Python Dev",
+    body:`We've been running experiments on toxicity detection across 6 Dravidian languages. The core challenge isn't the model — it's the benchmark datasets. Existing ones are either too small or scraped from non-representative sources.\n\nAfter fine-tuning mBERT and XLM-R, we found XLM-R consistently outperforms on morphologically rich languages by ~8% F1. But we're seeing hallucination-style errors where culturally benign idioms get flagged.\n\nHas anyone worked on cultural calibration for toxicity classifiers? Looking to pool dataset contributions if there's interest.`,
+    replies:[
+      { author:"Priya M.", init:"P", color:"#10B981", text:"We ran into the same issue with Hindi idioms. We used a cultural sensitivity filter layer on top — happy to share the notebook.", time:"2h ago", upvotes:24, xp:15 },
+      { author:"David K.", init:"D", color:"#0EA5E9", text:"The XLM-R finding matches what we saw in Bengali. 8% F1 improvement is solid. Did you test on code-switched text? That's where we see the biggest drop.", time:"1h ago", upvotes:18, xp:10,
+        nested:[{ author:"Arjun S.", init:"A", color:"#4F46E5", text:"Yes! Code-switching drops F1 by another 12%. It's basically a separate problem. Might need dedicated training data.", time:"45m ago", upvotes:9 }]
+      },
+      { author:"Sarah J.", init:"S", color:"#EC4899", text:"This is exactly what we need for the Prayas NGO task. I'm going to reference this thread in my task submission. Super valuable data here.", time:"30m ago", upvotes:11, xp:8 },
+    ]
+  },
+  {
+    id:2,
+    tag:"SUSTAINABILITY", tagColor:"#34D399", tagBg:"rgba(52,211,153,0.1)", tagBorder:"rgba(52,211,153,0.25)",
+    date:"Mar 25", title:"Urban Micro-Farming Hubs — Decentralised Hydroponic Systems",
+    desc:"Investigating the impact of decentralised hydroponic setups on food security in tier-2 Indian cities. Sharing field data from 3 pilot sites in Pune.",
+    author:"Elena R.", authorColor:"#059669", authorInitial:"E",
+    upvotes:98, comments:27, xp:25,
+    openFor:"OPEN: Data Analyst",
+    body:`Six months in on our urban micro-farming project. We've set up 3 pilot hydroponic units across Pune — one community centre, one school, and one apartment rooftop.\n\nKey findings so far:\n• 40% reduction in water usage vs traditional farming\n• 2.8x yield per sqm for leafy greens\n• Community engagement is the real bottleneck, not tech\n\nWe're looking for a data analyst to help build a proper longitudinal model. All raw sensor data is open-access. Drop a comment if interested!`,
+    replies:[
+      { author:"Kiran P.", init:"K", color:"#F59E0B", text:"The community engagement bottleneck is SO real. We saw the same in our Nagpur pilot. The tech works — getting people to trust it is the hard part.", time:"4h ago", upvotes:32, xp:18 },
+      { author:"Julianna C.", init:"J", color:"#14B8A6", text:"Would love to see the sensor data schema. Is it structured as time-series? We could help build a Grafana dashboard on top of this.", time:"3h ago", upvotes:15, xp:10 },
+    ]
+  },
+  {
+    id:3,
+    tag:"NEUROSCIENCE", tagColor:"#A78BFA", tagBg:"rgba(167,139,250,0.1)", tagBorder:"rgba(167,139,250,0.25)",
+    date:"Mar 24", title:"Sleep & Cognitive Load in Competitive Exam Students",
+    desc:"A study on non-REM cycles and memory consolidation in JEE/NEET aspirants. Surprising correlation with phone-based blue light exposure after 11PM.",
+    author:"Meera V.", authorColor:"#7C3AED", authorInitial:"M",
+    upvotes:201, comments:54, xp:30,
+    openFor:"FULL TEAM",
+    body:`We surveyed 120 JEE aspirants across 4 coaching centres in Kota. The correlation between sub-7-hour sleep and next-day recall scores was expected. What wasn't expected: the blue light effect is 2× stronger in students who study in air-conditioned rooms.\n\nHypothesis: lower ambient temperature + blue light = stronger melatonin suppression.\n\nWe're looking for a neuroscientist or biophysicist to help formalise this. We have EEG data from 18 volunteer subjects over 6 weeks.`,
+    replies:[
+      { author:"Dr. Rao K.", init:"R", color:"#6366F1", text:"The temperature-melatonin link is documented but understudied in Indian contexts. Your sample size is small but the EEG data could be very compelling. Can you share the preprocessing pipeline?", time:"6h ago", upvotes:45, xp:20 },
+      { author:"Fatima A.", init:"F", color:"#EC4899", text:"This is fascinating. I'm writing my thesis on cognitive load modelling — would love to include a chapter on this. Can we collaborate?", time:"5h ago", upvotes:28, xp:12,
+        nested:[{ author:"Meera V.", init:"M", color:"#7C3AED", text:"Absolutely! DM me. We're fully open to collaboration — more eyes on this data the better.", time:"4h ago", upvotes:16 }]
+      },
+    ]
+  },
+  {
+    id:4,
+    tag:"E-MOBILITY", tagColor:"#FCD34D", tagBg:"rgba(252,211,77,0.1)", tagBorder:"rgba(252,211,77,0.25)",
+    date:"Mar 23", title:"Modular Battery Swapping for Two-Wheeler EVs in India",
+    desc:"Universal standards for two-wheeler EV battery infrastructure in emerging markets. Can we build an open protocol before the proprietary solutions lock us out?",
+    author:"Rohan T.", authorColor:"#F59E0B", authorInitial:"R",
+    upvotes:87, comments:41, xp:20,
+    openFor:"OPEN: Mechanical Eng",
+    body:`India has 200M+ two-wheelers. If even 20% go electric by 2030, we'll have a battery interoperability crisis. Ola, Ather, and Hero are all building proprietary swap systems.\n\nI'm proposing an open specification — think USB-C but for EV batteries. Dimensions, connector type, BMS communication protocol, and thermal management standards.\n\nLooking for mechanical engineers and power electronics people to stress-test the spec. Draft v0.2 is linked below.`,
+    replies:[
+      { author:"Anjali S.", init:"A", color:"#10B981", text:"This is the open-source EV movement India needs. The USB-C analogy is perfect. Are you filing for any IP protections or keeping it fully open?", time:"8h ago", upvotes:29, xp:14 },
+    ]
+  },
+  {
+    id:5,
+    tag:"GLOBAL HEALTH", tagColor:"#F87171", tagBg:"rgba(248,113,113,0.1)", tagBorder:"rgba(248,113,113,0.25)",
+    date:"Mar 22", title:"Tele-Medicine Optimisation for Low-Bandwidth Rural Areas",
+    desc:"Reducing latency and improving diagnostic accuracy in rural healthcare consultations with sub-2Mbps connections. Sharing our WebRTC compression stack.",
+    author:"Priya N.", authorColor:"#EF4444", authorInitial:"P",
+    upvotes:156, comments:33, xp:25,
+    openFor:"OPEN: UX Lead",
+    body:`After 3 months of field testing in Rajasthan, we've gotten tele-consultation latency from ~800ms to ~220ms on 2G connections. The trick: we're not streaming video — we're streaming compressed audio + 3fps keyframes + differential patches.\n\nThe diagnostic accuracy for dermatology cases actually improved because doctors see higher-contrast still images rather than blurry video.\n\nWe need a UX lead to redesign the patient-side interface. Currently it's too complex for first-time users aged 50+.`,
+    replies:[
+      { author:"Kavya M.", init:"K", color:"#14B8A6", text:"The 3fps + differential patches approach is genius. Have you considered using super-resolution on the keyframes? Could improve diagnostic quality further.", time:"10h ago", upvotes:37, xp:18 },
+      { author:"Sarah J.", init:"S", color:"#EC4899", text:"I'd love to take on the UX lead role. I've designed for low-literacy users before. What's the current pain point — onboarding or the consultation flow itself?", time:"9h ago", upvotes:22, xp:12 },
+    ]
+  },
+  {
+    id:6,
+    tag:"EDTECH", tagColor:"#FCD34D", tagBg:"rgba(252,211,77,0.1)", tagBorder:"rgba(252,211,77,0.25)",
+    date:"Mar 21", title:"Gamified STEM Learning: RPG-Style Quests for Primary School Physics",
+    desc:"Impact of RPG-style quest mechanics on primary school student engagement in physics. 3-month study across 8 schools shows 2× completion rates.",
+    author:"Lakshmi P.", authorColor:"#F97316", authorInitial:"L",
+    upvotes:312, comments:71, xp:30,
+    openFor:"FULL TEAM",
+    body:`We ran a 3-month quasi-experiment across 8 government primary schools in Karnataka. Students in the gamified group completed 2× more physics modules and scored 18% higher on recall tests.\n\nThe key mechanics that worked:\n1. Narrative-driven problem framing ("The village needs energy — design a solar circuit")\n2. Visible XP progress with level-up moments\n3. Peer collaboration quests with shared rewards\n\nWe're now looking to scale. Full dataset and lesson design templates are open-access. This thread is linked to our EduReach NGO task on Skill Bridge.`,
+    replies:[
+      { author:"Riya S.", init:"R", color:"#A78BFA", text:"18% improvement on recall is massive for primary school. What was the control group doing — standard textbook?", time:"1d ago", upvotes:41, xp:15 },
+      { author:"Lakshmi P.", init:"L", color:"#F97316", text:"Yes, standard NCERT textbook approach. The narrative framing alone accounted for ~10% of the difference before we even added the XP mechanics.", time:"1d ago", upvotes:28,
+        nested:[{ author:"Dev M.", init:"D", color:"#0EA5E9", text:"Have you considered publishing this? Educational Psychology journals would love this dataset.", time:"20h ago", upvotes:19, xp:8 }]
+      },
+    ]
+  },
+  {
+    id:7,
+    tag:"AGRITECH", tagColor:"#86EFAC", tagBg:"rgba(134,239,172,0.1)", tagBorder:"rgba(134,239,172,0.25)",
+    date:"Mar 20", title:"Precision Pest Control via Computer Vision for Organic Farming",
+    desc:"Using computer vision for targeted organic pesticide application — reducing chemical usage by 60% in field trials. Open-sourcing the detection model.",
+    author:"Vikram A.", authorColor:"#22C55E", authorInitial:"V",
+    upvotes:74, comments:22, xp:20,
+    openFor:"OPEN: AI Researcher",
+    body:`We've trained a YOLOv8 model on 12,000 annotated images of 23 pest species common to Karnataka's cotton belt. Deployed on a Raspberry Pi 4 mounted on a drone, it achieves 91% detection accuracy at 4m altitude.\n\nThe precision spraying reduces chemical usage by ~60% vs broadcast spraying. That's not just cost — it's soil health and biodiversity.\n\nModel weights and dataset (CC BY 4.0) are on HuggingFace. Looking for someone to help with edge case handling — the model struggles with overlapping infestations.`,
+    replies:[
+      { author:"Arjun S.", init:"A", color:"#4F46E5", text:"This is incredible work. Edge case handling for overlapping infestations — have you tried instance segmentation instead of object detection? Mask R-CNN might help.", time:"2d ago", upvotes:31, xp:16 },
+    ]
+  },
+  {
+    id:8,
+    tag:"CYBERSECURITY", tagColor:"#93C5FD", tagBg:"rgba(147,197,253,0.1)", tagBorder:"rgba(147,197,253,0.25)",
+    date:"Mar 19", title:"Quantum Encryption Basics for Small-Scale Applications",
+    desc:"Exploring entry-level lattice-based cryptography for small-scale apps. Can student teams realistically implement post-quantum crypto without PhD-level maths?",
+    author:"Neha K.", authorColor:"#3B82F6", authorInitial:"N",
+    upvotes:63, comments:19, xp:15,
+    openFor:"OPEN: Security Auditor",
+    body:`Post-quantum cryptography is coming. NIST has finalised CRYSTALS-Kyber for key encapsulation. The question is: can a team of undergrads actually implement and verify this?\n\nI've been building a lightweight Kyber-512 implementation in Python for a personal project. It's not production-ready but it's educational. The maths (module learning with errors) is tough but the code structure is manageable.\n\nLooking for a security auditor — ideally someone who's worked with formal verification — to stress-test the implementation.`,
+    replies:[
+      { author:"Siddharth R.", init:"S", color:"#6366F1", text:"Kyber-512 in pure Python is a great learning exercise. Fair warning — performance will be rough. Have you benchmarked vs OpenSSL's classical RSA on the same hardware?", time:"2d ago", upvotes:18, xp:10 },
+    ]
+  },
+];
+
+/* ── Render helpers ─────────────────────────────────────────── */
+let currentView = 'grid';
+let currentTab  = 'all';
+
+function tagStyle(t) {
+  return `background:${t.tagBg};border-color:${t.tagBorder};color:${t.tagColor};`;
+}
+
+function renderThreads(list) {
+  const grid = document.getElementById('thread-grid');
+  grid.className = 'thread-grid' + (currentView === 'list' ? ' list-view' : '');
+  if (!list.length) {
+    grid.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-muted);grid-column:1/-1">No discussions found.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(t => `
+    <div class="th-card" onclick="openThread(${t.id})">
+      <div class="th-top">
+        <span class="th-topic-tag" style="${tagStyle(t)}">${t.tag}</span>
+        <span class="th-date">${t.date}</span>
+      </div>
+      <div class="th-title">${t.title}</div>
+      <div class="th-desc">${t.desc}</div>
+      <div class="th-footer">
+        <div class="th-author">
+          <div class="th-author-av" style="background:${t.authorColor}">${t.authorInitial}</div>
+          <span class="th-author-name">${t.author}</span>
+        </div>
+        <div class="th-meta">
+          <button class="th-upvote-btn" onclick="event.stopPropagation();toggleUpvote(this,${t.id})">
+            ▲ <span class="uv-count">${t.upvotes}</span>
+          </button>
+          <span class="th-stat">💬 ${t.comments}</span>
+          <span style="font-size:0.68rem;font-weight:600;padding:0.18rem 0.5rem;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);white-space:nowrap;">${t.openFor}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSidebar() {
+  const sorted = [...THREADS].sort((a,b) => b.comments - a.comments).slice(0,5);
+  document.getElementById('active-threads-sidebar').innerHTML = sorted.map((t,i) => `
+    <div class="at-item" onclick="openThread(${t.id})">
+      <span class="at-num">${i+1}</span>
+      <div class="at-info">
+        <div class="at-title">${t.title}</div>
+        <div class="at-meta">
+          <span class="at-comments">💬 ${t.comments} replies</span>
+          <span class="th-topic-tag" style="${tagStyle(t)};font-size:0.6rem;padding:0.1rem 0.4rem;">${t.tag}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderNetworkChart() {
+  const heights = [35,55,40,70,50,85,60,90,45,75,80,65,95,55,70,80,100,65,85,55,75,90,60,95,70,85,100,72];
+  const chart = document.getElementById('net-chart');
+  chart.innerHTML = heights.map((h,i) =>
+    `<div class="nc-bar${i===heights.length-1?' accent':''}" style="height:${h}%"></div>`
+  ).join('');
+}
+
+/* ── Filters ─────────────────────────────────────────────────── */
+const TAG_MAP = {
+  ai: ['AI & ETHICS','AI & ML'],
+  sustainability: ['SUSTAINABILITY'],
+  health: ['GLOBAL HEALTH','NEUROSCIENCE'],
+  edtech: ['EDTECH'],
+  other: ['E-MOBILITY','AGRITECH','CYBERSECURITY'],
+};
+function setTab(tab, btn) {
+  document.querySelectorAll('.rh-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = tab;
+  applyFilters();
+}
+function filterThreads(q) { applyFilters(q); }
+function applyFilters(q) {
+  const query = (q || document.querySelector('.feed-search')?.value || '').toLowerCase();
+  let list = THREADS;
+  if (currentTab !== 'all') {
+    const tags = TAG_MAP[currentTab] || [];
+    list = list.filter(t => tags.some(tag => t.tag.toUpperCase().includes(tag.toUpperCase())));
+  }
+  if (query) list = list.filter(t => t.title.toLowerCase().includes(query) || t.desc.toLowerCase().includes(query));
+  renderThreads(list);
+}
+function filterByTopic(topic) {
+  document.querySelector('.feed-search').value = topic;
+  applyFilters(topic);
+}
+
+function setView(v, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentView = v;
+  applyFilters();
+}
+function setNav(el, _) {
+  document.querySelectorAll('.rh-nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleUpvote(btn, id) {
+  btn.classList.toggle('voted');
+  const c = btn.querySelector('.uv-count');
+  const t = THREADS.find(x => x.id === id);
+  if (!t) return;
+  if (btn.classList.contains('voted')) { t.upvotes++; } else { t.upvotes--; }
+  c.textContent = t.upvotes;
+}
+
+/* ── Thread Detail ───────────────────────────────────────────── */
+function openThread(id) {
+  const t = THREADS.find(x => x.id === id);
+  if (!t) return;
+
+  document.getElementById('tp-header-meta').innerHTML = `
+    <span class="th-topic-tag" style="${tagStyle(t)}">${t.tag}</span>
+    <span style="font-size:0.72rem;color:var(--text-dim)">${t.date}</span>
+    <span style="font-size:0.7rem;font-weight:600;padding:0.18rem 0.5rem;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);">${t.openFor}</span>
+  `;
+  document.getElementById('tp-title').textContent = t.title;
+  document.getElementById('tp-author-av').style.background = t.authorColor;
+  document.getElementById('tp-author-av').textContent = t.authorInitial;
+  document.getElementById('tp-author-name').textContent = t.author;
+  document.getElementById('tp-date').textContent = t.date;
+  document.getElementById('tp-xp-badge').textContent = '⚡ +' + t.xp + ' XP';
+  document.getElementById('tp-body').textContent = t.body;
+  document.getElementById('tp-upvotes').textContent = '▲ ' + t.upvotes;
+  document.getElementById('tp-comment-count').textContent = t.comments;
+  document.getElementById('tp-comments-title').textContent = `${t.comments} Comments`;
+
+  // Render comments
+  document.getElementById('tp-comments').innerHTML = (t.replies || []).map(r => `
+    <div class="comment">
+      <div class="comment-av" style="background:${r.color}">${r.init}</div>
+      <div class="comment-body">
+        <div class="comment-meta">
+          <span class="comment-author">${r.author}</span>
+          <span class="comment-time">${r.time}</span>
+          ${r.xp ? `<span class="comment-xp">⚡ +${r.xp} XP</span>` : ''}
+        </div>
+        <p class="comment-text">${r.text}</p>
+        <div class="comment-actions">
+          <button class="comment-act" onclick="this.classList.toggle('voted');this.querySelector('span').textContent=(this.classList.contains('voted')?'▲ '+(${r.upvotes}+1):'▲ ${r.upvotes}')">▲ <span>${r.upvotes}</span></button>
+          <button class="comment-act">💬 Reply</button>
+          <button class="comment-act">🔖 Save</button>
+        </div>
+        ${(r.nested||[]).map(n => `
+          <div class="comment-nested" style="margin-top:0.75rem;">
+            <div class="comment">
+              <div class="comment-av" style="background:${n.color};width:24px;height:24px;font-size:0.6rem;">${n.init}</div>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  <span class="comment-author">${n.author}</span>
+                  <span class="comment-time">${n.time}</span>
+                </div>
+                <p class="comment-text">${n.text}</p>
+                <div class="comment-actions">
+                  <button class="comment-act">▲ ${n.upvotes}</button>
+                  <button class="comment-act">💬 Reply</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('thread-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeThread() {
+  document.getElementById('thread-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── New Discussion Modal ────────────────────────────────────── */
+function openNewDiscussion() {
+  document.getElementById('nd-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeNewDiscussion() {
+  document.getElementById('nd-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function submitDiscussion() {
+  closeNewDiscussion();
+  const toast = document.createElement('div');
+  toast.style.cssText = `position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--bg-surface);border:1px solid rgba(16,185,129,0.4);border-radius:var(--radius-md);padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;font-size:0.875rem;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:fadeUp 0.3s ease both;`;
+  toast.innerHTML = `<span style="font-size:1.25rem">✅</span> Discussion posted! <strong style="color:var(--xp-gold)">+30 XP</strong> earned.`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeThread(); closeNewDiscussion(); }});
+
+/* ── Init ──────────────────────────────────────────────────── */
+renderThreads(THREADS);
+renderSidebar();
+renderNetworkChart();
+</script>
+</body>
+</html>

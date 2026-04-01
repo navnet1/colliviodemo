@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillForge — Skill Bridge</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    /* ── Page Shell ─────────────────────────────────────────── */
+    .sb-page {
+      padding-top: 64px;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    /* ── Hero Strip ─────────────────────────────────────────── */
+    .sb-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 3.5rem 2rem 2.5rem;
+      background:
+        radial-gradient(ellipse 60% 140% at 0% 50%, rgba(79,70,229,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 80% at 100% 0%, rgba(192,38,211,0.12) 0%, transparent 55%),
+        var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .sb-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .sb-hero__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .sb-hero__left { max-width: 580px; }
+    .sb-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.08);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--indigo-light);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .sb-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 0.6rem;
+    }
+    .sb-hero__title span {
+      background: linear-gradient(135deg, var(--indigo-light), var(--violet-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sb-hero__sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .sb-hero__stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .sb-stat {
+      text-align: center;
+      padding: 1rem 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(8px);
+      min-width: 100px;
+    }
+    .sb-stat__value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--text), var(--indigo-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+    .sb-stat__label { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.2rem; }
+
+    /* ── Main Layout ────────────────────────────────────────── */
+    .sb-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── Filter Sidebar ─────────────────────────────────────── */
+    .filter-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      position: sticky;
+      top: 84px;
+      animation: fadeUp 0.4s ease both;
+    }
+    .filter-sidebar__title {
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-clear {
+      font-size: 0.72rem;
+      color: var(--indigo-light);
+      cursor: pointer;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .filter-clear:hover { color: var(--violet-light); }
+
+    .filter-section { margin-bottom: 1.5rem; }
+    .filter-section:last-child { margin-bottom: 0; }
+    .filter-section__label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+    .filter-options { display: flex; flex-direction: column; gap: 0.35rem; }
+    .filter-opt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .filter-opt:hover {
+      background: rgba(99,102,241,0.07);
+      border-color: rgba(99,102,241,0.15);
+    }
+    .filter-opt.active {
+      background: rgba(99,102,241,0.12);
+      border-color: rgba(99,102,241,0.3);
+    }
+    .filter-opt-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .filter-opt.active .filter-opt-left { color: var(--indigo-light); }
+    .filter-opt-count {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.05);
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+    }
+    .filter-opt.active .filter-opt-count {
+      background: rgba(99,102,241,0.2);
+      color: var(--indigo-light);
+    }
+
+    /* XP range slider */
+    .xp-range {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .xp-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .xp-range-labels span { color: var(--xp-gold); font-weight: 600; }
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--indigo) 0%, var(--indigo) 68%, rgba(255,255,255,0.08) 68%);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--indigo-light);
+      border: 2px solid var(--bg-card);
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.4);
+      cursor: pointer;
+    }
+
+    /* ── Content Area ───────────────────────────────────────── */
+    .sb-content { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* Top bar */
+    .sb-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.4s 0.05s ease both;
+    }
+    .sb-search-wrap {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+    .sb-search-wrap .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    .sb-search {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .sb-search::placeholder { color: var(--text-dim); }
+    .sb-search:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+    }
+    .sb-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .sort-select {
+      padding: 0.6rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .sort-select:focus { border-color: var(--indigo); }
+    .results-count {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .results-count strong { color: var(--text); }
+
+    /* Active filter chips row */
+    .active-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.4s 0.1s ease both;
+    }
+    .active-filters:empty { display: none; }
+    .active-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.25);
+      color: var(--indigo-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .active-chip:hover { background: rgba(99,102,241,0.2); }
+    .active-chip .chip-x { font-size: 0.8rem; opacity: 0.7; }
+
+    /* ── Task Grid ──────────────────────────────────────────── */
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.1rem;
+      animation: fadeUp 0.4s 0.15s ease both;
+    }
+
+    /* Task Card */
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .task-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      background: linear-gradient(90deg, var(--indigo), var(--violet));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .task-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 8px 32px rgba(79,70,229,0.15);
+      transform: translateY(-3px);
+    }
+    .task-card:hover::before { opacity: 1; }
+
+    /* Card Header */
+    .task-card__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .org-info { display: flex; align-items: center; gap: 0.65rem; }
+    .org-logo {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .org-meta { display: flex; flex-direction: column; gap: 0.1rem; }
+    .org-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .org-type-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.68rem;
+      font-weight: 500;
+    }
+    .task-card__save {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .task-card__save:hover,
+    .task-card__save.saved {
+      background: rgba(245,158,11,0.1);
+      border-color: rgba(245,158,11,0.3);
+      color: var(--xp-gold);
+    }
+
+    /* Task title + desc */
+    .task-card__body { flex: 1; }
+    .task-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 0.45rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .task-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Footer row */
+    .task-card__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    .task-tags { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+    .task-card__action {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .task-card__action:hover {
+      box-shadow: 0 4px 16px rgba(79,70,229,0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Deadline chip */
+    .deadline-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+    }
+    .deadline-chip.urgent { color: #FCA5A5; border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.06); }
+
+    /* ── MODAL ──────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .task-modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      overflow-y: auto;
+      transform: translateY(24px) scale(0.98);
+      transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+      position: relative;
+    }
+    .modal-overlay.open .task-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Modal top gradient bar */
+    .modal-bar {
+      height: 4px;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      background: linear-gradient(90deg, var(--indigo), var(--violet), var(--fuchsia));
+    }
+
+    .modal-body { padding: 2rem; }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .modal-close {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #FCA5A5; }
+
+    .modal-org { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; }
+    .modal-org-logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      border: 1px solid var(--border);
+    }
+    .modal-org-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .modal-org-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .modal-org-sub  { font-size: 0.78rem; color: var(--text-muted); }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    /* Modal meta pills row */
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Sections */
+    .modal-section { margin-bottom: 1.5rem; }
+    .modal-section-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .modal-section p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .modal-req-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      list-style: none;
+    }
+    .modal-req-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.855rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .modal-req-list li::before {
+      content: '✦';
+      color: var(--indigo-light);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+      font-size: 0.7rem;
+    }
+
+    .modal-skills { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+    /* Deliverables */
+    .deliverable-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .deliverable-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .deliverable-item .d-icon { font-size: 0.9rem; }
+
+    /* XP reward big display */
+    .xp-reward-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.2);
+      margin-bottom: 1rem;
+    }
+    .xp-reward-left { display: flex; flex-direction: column; gap: 0.2rem; }
+    .xp-reward-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+    .xp-reward-value {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--xp-gold);
+    }
+    .xp-reward-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .xp-flame { font-size: 2.5rem; }
+
+    /* Modal footer */
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .modal-footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .modal-footer-label { font-size: 0.75rem; color: var(--text-dim); }
+    .modal-footer-deadline { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .modal-footer-right { display: flex; gap: 0.65rem; }
+
+    /* Apply button shine */
+    .apply-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .apply-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -100%;
+      width: 60%; height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.5s;
+    }
+    .apply-btn:hover::after { left: 160%; }
+
+    /* ── No results ─────────────────────────────────────────── */
+    .no-results {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+      display: none;
+      grid-column: 1 / -1;
+    }
+    .no-results.show { display: block; }
+    .no-results__emoji { font-size: 3rem; margin-bottom: 1rem; }
+    .no-results h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text); }
+    .no-results p { font-size: 0.875rem; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sb-layout { grid-template-columns: 1fr; padding: 1.25rem; }
+      .filter-sidebar { position: static; }
+      .sb-hero__stats { justify-content: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .task-grid { grid-template-columns: 1fr; }
+      .sb-hero { padding: 2rem 1rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <span class="navbar__logo">⚡ SkillForge</span>
+  <ul class="navbar__links">
+    <li><a href="profile.html">Profile</a></li>
+    <li><a href="skill-bridge.html" class="active">Skill Bridge</a></li>
+    <li><a href="research-hub.html">Research Hub</a></li>
+    <li><a href="challenge-lab.html">Challenge Lab</a></li>
+  </ul>
+  <div class="navbar__xp">⚡ <span>2,450 XP</span></div>
+</nav>
+
+<div class="sb-page">
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <div class="sb-hero">
+    <div class="sb-hero__inner">
+      <div class="sb-hero__left">
+        <div class="sb-hero__eyebrow">🔗 Employment Skill Bridge</div>
+        <h1 class="sb-hero__title">Real problems.<br /><span>Real XP. Real jobs.</span></h1>
+        <p class="sb-hero__sub">NGOs and startups post open tasks. Solve them, earn XP, and let your work speak louder than your resume.</p>
+      </div>
+      <div class="sb-hero__stats">
+        <div class="sb-stat">
+          <span class="sb-stat__value">148</span>
+          <span class="sb-stat__label">Open Tasks</span>
+        </div>
+        <div class="sb-stat">
+          <span class="sb-stat__value">62</span>
+          <span class="sb-stat__label">Organisations</span>
+        </div>
+        <div class="sb-stat">
+          <span class="sb-stat__value">12K</span>
+          <span class="sb-stat__label">XP Given Out</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layout ────────────────────────────────────────────── -->
+  <div class="sb-layout">
+
+    <!-- ═══ FILTER SIDEBAR ═══ -->
+    <aside class="filter-sidebar">
+      <div class="filter-sidebar__title">
+        Filters
+        <button class="filter-clear" onclick="clearAllFilters()">Clear all</button>
+      </div>
+
+      <!-- XP Range -->
+      <div class="filter-section">
+        <span class="filter-section__label">XP Reward Range</span>
+        <div class="xp-range">
+          <div class="xp-range-labels">
+            <span>0 XP</span>
+            <span id="xp-val">≤ 500 XP</span>
+          </div>
+          <input type="range" min="50" max="600" value="500" step="50"
+            id="xp-slider"
+            oninput="document.getElementById('xp-val').textContent = '≤ ' + this.value + ' XP'; applyFilters()" />
+        </div>
+      </div>
+
+      <!-- Org Type -->
+      <div class="filter-section">
+        <span class="filter-section__label">Organisation Type</span>
+        <div class="filter-options" id="filter-org">
+          <div class="filter-opt active" data-val="all" onclick="toggleFilter('org', 'all', this)">
+            <div class="filter-opt-left"><span>🌐</span> All Orgs</div>
+            <span class="filter-opt-count">148</span>
+          </div>
+          <div class="filter-opt" data-val="NGO" onclick="toggleFilter('org', 'NGO', this)">
+            <div class="filter-opt-left"><span>🤝</span> NGO</div>
+            <span class="filter-opt-count">54</span>
+          </div>
+          <div class="filter-opt" data-val="Startup" onclick="toggleFilter('org', 'Startup', this)">
+            <div class="filter-opt-left"><span>🚀</span> Startup</div>
+            <span class="filter-opt-count">71</span>
+          </div>
+          <div class="filter-opt" data-val="Research" onclick="toggleFilter('org', 'Research', this)">
+            <div class="filter-opt-left"><span>🔬</span> Research Lab</div>
+            <span class="filter-opt-count">23</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="filter-section">
+        <span class="filter-section__label">Difficulty</span>
+        <div class="filter-options" id="filter-diff">
+          <div class="filter-opt active" data-val="all" onclick="toggleFilter('diff', 'all', this)">
+            <div class="filter-opt-left"><span>⬛</span> All Levels</div>
+            <span class="filter-opt-count">148</span>
+          </div>
+          <div class="filter-opt" data-val="Easy" onclick="toggleFilter('diff', 'Easy', this)">
+            <div class="filter-opt-left"><span style="color:#34D399">●</span> Easy</div>
+            <span class="filter-opt-count">52</span>
+          </div>
+          <div class="filter-opt" data-val="Medium" onclick="toggleFilter('diff', 'Medium', this)">
+            <div class="filter-opt-left"><span style="color:#FCD34D">●</span> Medium</div>
+            <span class="filter-opt-count">68</span>
+          </div>
+          <div class="filter-opt" data-val="Hard" onclick="toggleFilter('diff', 'Hard', this)">
+            <div class="filter-opt-left"><span style="color:#FCA5A5">●</span> Hard</div>
+            <span class="filter-opt-count">28</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain -->
+      <div class="filter-section">
+        <span class="filter-section__label">Domain</span>
+        <div class="filter-options" id="filter-domain">
+          <div class="filter-opt active" data-val="all" onclick="toggleFilter('domain','all',this)">
+            <div class="filter-opt-left"><span>✦</span> All Domains</div>
+            <span class="filter-opt-count">148</span>
+          </div>
+          <div class="filter-opt" data-val="Tech" onclick="toggleFilter('domain','Tech',this)">
+            <div class="filter-opt-left"><span>💻</span> Tech</div>
+            <span class="filter-opt-count">63</span>
+          </div>
+          <div class="filter-opt" data-val="Design" onclick="toggleFilter('domain','Design',this)">
+            <div class="filter-opt-left"><span>🎨</span> Design</div>
+            <span class="filter-opt-count">29</span>
+          </div>
+          <div class="filter-opt" data-val="Research" onclick="toggleFilter('domain','Research',this)">
+            <div class="filter-opt-left"><span>🔬</span> Research</div>
+            <span class="filter-opt-count">31</span>
+          </div>
+          <div class="filter-opt" data-val="Writing" onclick="toggleFilter('domain','Writing',this)">
+            <div class="filter-opt-left"><span>✍</span> Writing</div>
+            <span class="filter-opt-count">25</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ CONTENT ═══ -->
+    <div class="sb-content">
+
+      <!-- Topbar -->
+      <div class="sb-topbar">
+        <div class="sb-search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="sb-search" type="text" placeholder="Search tasks, orgs, skills…" id="search-input" oninput="applyFilters()" />
+        </div>
+        <div class="sb-topbar-right">
+          <span class="results-count"><strong id="results-num">12</strong> tasks</span>
+          <select class="sort-select" onchange="applyFilters()">
+            <option value="newest">Newest first</option>
+            <option value="xp-high">XP: High to Low</option>
+            <option value="xp-low">XP: Low to High</option>
+            <option value="deadline">Deadline soon</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active filter chips -->
+      <div class="active-filters" id="active-filters"></div>
+
+      <!-- Task Grid -->
+      <div class="task-grid" id="task-grid">
+        <!-- Cards injected by JS -->
+      </div>
+
+    </div><!-- /sb-content -->
+  </div><!-- /sb-layout -->
+</div><!-- /sb-page -->
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- MODAL                                                      -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="task-modal-overlay" onclick="closeModal(event)">
+  <div class="task-modal" id="task-modal">
+    <div class="modal-bar"></div>
+    <div class="modal-body">
+      <!-- Header -->
+      <div class="modal-header">
+        <div>
+          <div class="modal-org" id="m-org"></div>
+          <h2 class="modal-title" id="m-title"></h2>
+        </div>
+        <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      </div>
+
+      <!-- Meta pills -->
+      <div class="modal-meta" id="m-meta"></div>
+
+      <!-- XP Reward box -->
+      <div class="xp-reward-box">
+        <div class="xp-reward-left">
+          <span class="xp-reward-label">XP Reward</span>
+          <span class="xp-reward-value" id="m-xp">+250 XP</span>
+          <span class="xp-reward-sub">Awarded on task completion & review</span>
+        </div>
+        <span class="xp-flame">⚡</span>
+      </div>
+
+      <!-- Description -->
+      <div class="modal-section">
+        <div class="modal-section-title">About this task</div>
+        <p id="m-desc"></p>
+      </div>
+
+      <!-- Requirements -->
+      <div class="modal-section">
+        <div class="modal-section-title">Requirements</div>
+        <ul class="modal-req-list" id="m-reqs"></ul>
+      </div>
+
+      <!-- Skills needed -->
+      <div class="modal-section">
+        <div class="modal-section-title">Skills needed</div>
+        <div class="modal-skills" id="m-skills"></div>
+      </div>
+
+      <!-- Deliverables -->
+      <div class="modal-section">
+        <div class="modal-section-title">Deliverables</div>
+        <div class="deliverable-list" id="m-deliverables"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <div class="modal-footer-left">
+          <span class="modal-footer-label">Application deadline</span>
+          <span class="modal-footer-deadline" id="m-deadline"></span>
+        </div>
+        <div class="modal-footer-right">
+          <button class="btn btn--outline" onclick="closeModalDirect()">Save for later 🔖</button>
+          <button class="btn btn--primary btn--lg apply-btn" onclick="handleApply()">Accept Task ⚡</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS                                                    -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+
+/* ─── Data ──────────────────────────────────────────────────── */
+const TASKS = [
+  {
+    id: 1,
+    org: "Prayas NGO",
+    orgType: "NGO",
+    orgEmoji: "🤝",
+    orgColor: "#10B981",
+    title: "Build NLP pipeline for sentiment analysis on Hindi tweets",
+    desc: "Help us understand public sentiment around social welfare schemes in rural India using Hindi-language Twitter data. You'll preprocess raw tweets, fine-tune a multilingual model, and produce a usable dashboard.",
+    xp: 220,
+    diff: "Easy",
+    domain: "Tech",
+    deadline: "Apr 10, 2026",
+    urgent: false,
+    skills: ["Python","NLP","HuggingFace","Pandas"],
+    reqs: ["Familiarity with NLP and text classification","Python proficiency with HuggingFace or spaCy","Can commit 8–10 hrs over 2 weeks","Basic understanding of social media data"],
+    deliverables: ["Cleaned + annotated dataset (CSV)","Fine-tuned sentiment model","Simple dashboard (Streamlit or notebook)","Short write-up PDF"],
+    posted: "Mar 20, 2026",
+  },
+  {
+    id: 2,
+    org: "PayNXT",
+    orgType: "Startup",
+    orgEmoji: "🚀",
+    orgColor: "#7C3AED",
+    title: "Design micro-lending risk scoring UI for low-income borrowers",
+    desc: "We need a clean, accessible interface for loan officers to visualise risk scores in rural branches. The design must be legible on low-res screens, support Hindi and English, and follow WCAG AA.",
+    xp: 310,
+    diff: "Medium",
+    domain: "Design",
+    deadline: "Apr 18, 2026",
+    urgent: false,
+    skills: ["Figma","UX Research","Accessibility","Data Visualisation"],
+    reqs: ["Strong Figma skills with component libraries","Experience designing for low-literacy users","Ability to conduct 2–3 brief user interviews remotely","Understanding of WCAG accessibility guidelines"],
+    deliverables: ["Figma prototype (desktop + mobile)","Component library","Annotated design handoff doc","Accessibility checklist"],
+    posted: "Mar 18, 2026",
+  },
+  {
+    id: 3,
+    org: "ClimateCode",
+    orgType: "Research",
+    orgEmoji: "🔬",
+    orgColor: "#4F46E5",
+    title: "Write technical documentation for open-source climate data API",
+    desc: "Our REST API serves historical climate data to researchers across 12 countries. We need clear, structured docs covering authentication, endpoints, error codes, and practical examples in Python and R.",
+    xp: 100,
+    diff: "Easy",
+    domain: "Writing",
+    deadline: "Apr 5, 2026",
+    urgent: true,
+    skills: ["Technical Writing","REST APIs","Python","Markdown"],
+    reqs: ["Strong technical writing skills","Comfort reading and explaining API responses","Familiarity with OpenAPI / Swagger is a plus","Can deliver within 10 days"],
+    deliverables: ["Docs website (Docusaurus or MkDocs)","API reference (OpenAPI YAML)","Quick-start guide","3 worked examples (Python & R)"],
+    posted: "Mar 22, 2026",
+  },
+  {
+    id: 4,
+    org: "WaterAid India",
+    orgType: "NGO",
+    orgEmoji: "💧",
+    orgColor: "#0EA5E9",
+    title: "Build real-time water quality monitoring dashboard",
+    desc: "We deploy IoT sensors across 40 villages in Rajasthan. Build a web dashboard that ingests sensor readings via MQTT, flags anomalies, and lets field workers export reports — all offline-first.",
+    xp: 480,
+    diff: "Hard",
+    domain: "Tech",
+    deadline: "Apr 25, 2026",
+    urgent: false,
+    skills: ["React","MQTT","Node.js","SQLite","Offline-first"],
+    reqs: ["Experience building real-time data apps","Familiarity with MQTT or WebSockets","PWA / offline-first experience strongly preferred","Ability to test with mock IoT data"],
+    deliverables: ["Deployed PWA (Vercel or Netlify)","Source code (GitHub)","Admin & field-worker user guides","Load test report"],
+    posted: "Mar 15, 2026",
+  },
+  {
+    id: 5,
+    org: "Yuva Foundation",
+    orgType: "NGO",
+    orgEmoji: "🌱",
+    orgColor: "#22C55E",
+    title: "REST API for volunteer hours tracking and certification",
+    desc: "Build a Node.js REST API that lets NGO coordinators log volunteer hours, generate digitally-signed PDF certificates, and expose a public badge endpoint for LinkedIn verification.",
+    xp: 300,
+    diff: "Medium",
+    domain: "Tech",
+    deadline: "Apr 14, 2026",
+    urgent: false,
+    skills: ["Node.js","PostgreSQL","JWT","PDF generation"],
+    reqs: ["Solid REST API experience (Express or Fastify)","PostgreSQL schema design","Experience with JWT auth","PDF generation library knowledge (Puppeteer, PDFKit)"],
+    deliverables: ["Hosted API with Swagger docs","PostgreSQL schema + seed data","PDF certificate template","Postman collection"],
+    posted: "Mar 17, 2026",
+  },
+  {
+    id: 6,
+    org: "NeuroLeap",
+    orgType: "Startup",
+    orgEmoji: "🧠",
+    orgColor: "#EC4899",
+    title: "Conduct UX research for adaptive learning app (dyslexia users)",
+    desc: "We're building a reading tool for students with dyslexia. Help us design and run a moderated usability study with 6–8 participants, synthesise findings, and recommend design changes.",
+    xp: 250,
+    diff: "Medium",
+    domain: "Research",
+    deadline: "Apr 20, 2026",
+    urgent: false,
+    skills: ["UX Research","Usability Testing","Affinity Mapping","Figma"],
+    reqs: ["Prior experience running moderated usability tests","Knowledge of assistive technology and inclusive design","Empathy and patience working with neurodivergent users","Proficiency with Maze, Lookback, or similar tools"],
+    deliverables: ["Research plan & screener","Session recordings (anonymised)","Affinity diagram","Research report with prioritised recommendations"],
+    posted: "Mar 19, 2026",
+  },
+  {
+    id: 7,
+    org: "AgriSense",
+    orgType: "Startup",
+    orgEmoji: "🌾",
+    orgColor: "#F59E0B",
+    title: "Train crop disease detection model from farmer-submitted photos",
+    desc: "Indian farmers submit photos of diseased crops via WhatsApp. Label a 3,000-image dataset and fine-tune a MobileNetV3 classifier to detect the 8 most common diseases with >85% accuracy.",
+    xp: 420,
+    diff: "Hard",
+    domain: "Tech",
+    deadline: "Apr 30, 2026",
+    urgent: false,
+    skills: ["Python","PyTorch","Computer Vision","Data Labelling"],
+    reqs: ["Experience fine-tuning image classifiers","Comfortable with PyTorch or TensorFlow","Willing to sign a data NDA","Able to set up a reproducible training pipeline (W&B or MLflow)"],
+    deliverables: ["Labelled dataset (Roboflow or equivalent)","Trained model weights","Evaluation report (confusion matrix, F1)","Inference script + Docker image"],
+    posted: "Mar 12, 2026",
+  },
+  {
+    id: 8,
+    org: "LexAI",
+    orgType: "Startup",
+    orgEmoji: "⚖️",
+    orgColor: "#6366F1",
+    title: "Write plain-language summaries of 50 Indian court judgements",
+    desc: "Access to justice starts with understanding. Summarise 50 Supreme Court and High Court judgements into <200-word plain-language briefs, verified for accuracy by our legal team.",
+    xp: 150,
+    diff: "Easy",
+    domain: "Writing",
+    deadline: "Apr 8, 2026",
+    urgent: true,
+    skills: ["Legal Writing","Research","Plain Language","Editing"],
+    reqs: ["Law student or graduate (LLB/LLM preferred)","Strong written English","Ability to strip jargon without losing legal accuracy","Familiarity with Indian court systems"],
+    deliverables: ["50 plain-language summaries (Google Doc)","Source citation for each judgement","Editor sign-off checklist","Style guide adherence report"],
+    posted: "Mar 21, 2026",
+  },
+  {
+    id: 9,
+    org: "UrbanRoots",
+    orgType: "NGO",
+    orgEmoji: "🏙️",
+    orgColor: "#14B8A6",
+    title: "GIS map of informal settlements and municipal water access gaps",
+    desc: "Map 14 slum clusters in Pune using QGIS, overlay municipal pipeline data, and produce a priority report identifying communities most at risk of water scarcity.",
+    xp: 350,
+    diff: "Hard",
+    domain: "Research",
+    deadline: "May 2, 2026",
+    urgent: false,
+    skills: ["QGIS","GIS","Python","Data Analysis"],
+    reqs: ["Proficiency in QGIS or ArcGIS","Experience with spatial data formats (GeoJSON, Shapefile)","Ability to source open government datasets","Strong data storytelling / cartography skills"],
+    deliverables: ["QGIS project file + all layers","Interactive web map (Leaflet or Mapbox)","Priority risk report (PDF)","Raw data sources list"],
+    posted: "Mar 10, 2026",
+  },
+  {
+    id: 10,
+    org: "EduReach",
+    orgType: "NGO",
+    orgEmoji: "📚",
+    orgColor: "#F97316",
+    title: "Develop offline-capable quiz app for government school students",
+    desc: "Build a lightweight PWA quiz application for Class 6–8 students in areas with poor connectivity. Content syncs when online; students can complete quizzes and earn badges fully offline.",
+    xp: 380,
+    diff: "Hard",
+    domain: "Tech",
+    deadline: "Apr 22, 2026",
+    urgent: false,
+    skills: ["PWA","React","IndexedDB","Service Workers"],
+    reqs: ["Experience building Progressive Web Apps","IndexedDB / service worker expertise","Ability to work with a provided content JSON spec","Chromebook + Android testing capability"],
+    deliverables: ["Deployed PWA (GitHub Pages)","Service worker caching strategy doc","Content upload admin panel","Performance audit (Lighthouse)"],
+    posted: "Mar 14, 2026",
+  },
+  {
+    id: 11,
+    org: "Sangam Research",
+    orgType: "Research",
+    orgEmoji: "🔬",
+    orgColor: "#8B5CF6",
+    title: "Literature review: AI bias in hiring tools across South Asia",
+    desc: "Conduct a systematic literature review of 40+ papers examining algorithmic bias in recruitment software deployed in India, Bangladesh, and Sri Lanka. Produce a synthesis report for a forthcoming policy brief.",
+    xp: 200,
+    diff: "Medium",
+    domain: "Research",
+    deadline: "Apr 16, 2026",
+    urgent: false,
+    skills: ["Academic Research","Zotero","Technical Writing","AI Ethics"],
+    reqs: ["Experience conducting systematic literature reviews","Familiarity with AI fairness/bias terminology","Access to Semantic Scholar or Scopus","Ability to synthesise conflicting findings"],
+    deliverables: ["Annotated bibliography (Zotero library)","Synthesis matrix (spreadsheet)","5,000-word review document","Executive summary (800 words)"],
+    posted: "Mar 16, 2026",
+  },
+  {
+    id: 12,
+    org: "HealthBridge",
+    orgType: "NGO",
+    orgEmoji: "🏥",
+    orgColor: "#EF4444",
+    title: "Translate and localise mental health chatbot scripts into Tamil",
+    desc: "Our WhatsApp chatbot provides psychoeducation content in English. Translate and culturally adapt 120 conversation scripts into Tamil, ensuring idioms, stigma considerations, and tone are appropriate.",
+    xp: 180,
+    diff: "Easy",
+    domain: "Writing",
+    deadline: "Apr 12, 2026",
+    urgent: false,
+    skills: ["Tamil","Translation","Mental Health","Cultural Adaptation"],
+    reqs: ["Native or near-native Tamil proficiency","Understanding of mental health communication best practices","Sensitivity to stigma and cultural nuance","Prior translation or localisation work a plus"],
+    deliverables: ["120 translated scripts (Google Sheet)","Cultural adaptation notes","Glossary of standardised mental health terms","Reviewer sign-off form"],
+    posted: "Mar 18, 2026",
+  },
+];
+
+/* ─── State ─────────────────────────────────────────────────── */
+let activeFilters = { org: 'all', diff: 'all', domain: 'all' };
+let activeModal = null;
+
+/* ─── Render cards ──────────────────────────────────────────── */
+function diffClass(d) {
+  return d === 'Easy' ? 'tag--easy' : d === 'Medium' ? 'tag--medium' : 'tag--hard';
+}
+function orgClass(t) {
+  return t === 'NGO' ? 'tag--ngo' : t === 'Research' ? 'tag--research' : 'tag--startup';
+}
+
+function renderCards(tasks) {
+  const grid = document.getElementById('task-grid');
+  document.getElementById('results-num').textContent = tasks.length;
+  if (!tasks.length) {
+    grid.innerHTML = `<div class="no-results show"><div class="no-results__emoji">🔍</div><h3>No tasks match your filters</h3><p>Try adjusting the filters or search term.</p></div>`;
+    return;
+  }
+  grid.innerHTML = tasks.map(t => `
+    <div class="task-card" onclick="openModal(${t.id})">
+      <div class="task-card__head">
+        <div class="org-info">
+          <div class="org-logo" style="background:${t.orgColor}18;border-color:${t.orgColor}30;">${t.orgEmoji}</div>
+          <div class="org-meta">
+            <span class="org-name">${t.org}</span>
+            <span class="org-type-chip tag ${orgClass(t.orgType)}" style="font-size:0.65rem;padding:0.12rem 0.5rem;">${t.orgType}</span>
+          </div>
+        </div>
+        <button class="task-card__save" onclick="toggleSave(event,this)" title="Save task">🔖</button>
+      </div>
+
+      <div class="task-card__body">
+        <div class="task-title">${t.title}</div>
+        <div class="task-desc">${t.desc}</div>
+      </div>
+
+      <div class="task-card__foot">
+        <div class="task-tags">
+          <span class="tag ${diffClass(t.diff)}" style="font-size:0.7rem;padding:0.2rem 0.55rem;">${t.diff}</span>
+          <span class="xp-badge"><span class="xp-icon">⚡</span>+${t.xp} XP</span>
+          <span class="deadline-chip${t.urgent ? ' urgent' : ''}">⏰ ${t.deadline}</span>
+        </div>
+        <button class="task-card__action" onclick="event.stopPropagation();openModal(${t.id})">View Task →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ─── Filters ───────────────────────────────────────────────── */
+function toggleFilter(group, val, el) {
+  document.querySelectorAll(`#filter-${group} .filter-opt`).forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  activeFilters[group] = val;
+  updateActiveChips();
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const xpMax = parseInt(document.getElementById('xp-slider').value);
+
+  let filtered = TASKS.filter(t => {
+    const matchOrg    = activeFilters.org    === 'all' || t.orgType === activeFilters.org;
+    const matchDiff   = activeFilters.diff   === 'all' || t.diff    === activeFilters.diff;
+    const matchDomain = activeFilters.domain === 'all' || t.domain  === activeFilters.domain;
+    const matchXP     = t.xp <= xpMax;
+    const matchSearch = !search ||
+      t.title.toLowerCase().includes(search) ||
+      t.org.toLowerCase().includes(search) ||
+      t.skills.some(s => s.toLowerCase().includes(search));
+    return matchOrg && matchDiff && matchDomain && matchXP && matchSearch;
+  });
+
+  renderCards(filtered);
+}
+
+function clearAllFilters() {
+  ['org','diff','domain'].forEach(g => {
+    activeFilters[g] = 'all';
+    document.querySelectorAll(`#filter-${g} .filter-opt`).forEach((o,i) => {
+      o.classList.toggle('active', i === 0);
+    });
+  });
+  document.getElementById('xp-slider').value = 600;
+  document.getElementById('xp-val').textContent = '≤ 600 XP';
+  document.getElementById('search-input').value = '';
+  updateActiveChips();
+  applyFilters();
+}
+
+function updateActiveChips() {
+  const wrap = document.getElementById('active-filters');
+  const chips = [];
+  if (activeFilters.org    !== 'all') chips.push(`<div class="active-chip" onclick="toggleFilter('org','all', document.querySelector('#filter-org .filter-opt'))">Org: ${activeFilters.org} <span class="chip-x">✕</span></div>`);
+  if (activeFilters.diff   !== 'all') chips.push(`<div class="active-chip" onclick="toggleFilter('diff','all', document.querySelector('#filter-diff .filter-opt'))">Diff: ${activeFilters.diff} <span class="chip-x">✕</span></div>`);
+  if (activeFilters.domain !== 'all') chips.push(`<div class="active-chip" onclick="toggleFilter('domain','all', document.querySelector('#filter-domain .filter-opt'))">Domain: ${activeFilters.domain} <span class="chip-x">✕</span></div>`);
+  wrap.innerHTML = chips.join('');
+}
+
+function toggleSave(e, btn) {
+  e.stopPropagation();
+  btn.classList.toggle('saved');
+  btn.textContent = btn.classList.contains('saved') ? '⭐' : '🔖';
+}
+
+/* ─── Modal ─────────────────────────────────────────────────── */
+function openModal(id) {
+  const t = TASKS.find(x => x.id === id);
+  if (!t) return;
+  activeModal = id;
+
+  document.getElementById('m-org').innerHTML = `
+    <div class="modal-org-logo" style="background:${t.orgColor}18;border-color:${t.orgColor}30;">${t.orgEmoji}</div>
+    <div class="modal-org-info">
+      <span class="modal-org-name">${t.org}</span>
+      <span class="modal-org-sub tag ${orgClass(t.orgType)}" style="font-size:0.7rem;padding:0.15rem 0.55rem;width:fit-content;">${t.orgType}</span>
+    </div>`;
+
+  document.getElementById('m-title').textContent = t.title;
+  document.getElementById('m-xp').textContent = `+${t.xp} XP`;
+
+  document.getElementById('m-meta').innerHTML = [
+    `<span class="modal-pill tag ${diffClass(t.diff)}">${t.diff}</span>`,
+    `<span class="modal-pill">📅 Posted ${t.posted}</span>`,
+    `<span class="modal-pill">⏰ Due ${t.deadline}</span>`,
+    `<span class="modal-pill">🗂 ${t.domain}</span>`,
+    t.urgent ? `<span class="modal-pill deadline-chip urgent">🔥 Urgent</span>` : '',
+  ].join('');
+
+  document.getElementById('m-desc').textContent = t.desc;
+  document.getElementById('m-reqs').innerHTML = t.reqs.map(r => `<li>${r}</li>`).join('');
+  document.getElementById('m-skills').innerHTML = t.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+  document.getElementById('m-deliverables').innerHTML = t.deliverables.map(d =>
+    `<div class="deliverable-item"><span class="d-icon">📄</span>${d}</div>`).join('');
+  document.getElementById('m-deadline').textContent = t.deadline;
+
+  document.getElementById('task-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('task-modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('task-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  activeModal = null;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+function handleApply() {
+  const btn = document.querySelector('.apply-btn');
+  btn.textContent = '✅ Task Accepted!';
+  btn.style.background = 'linear-gradient(135deg, #059669, #10B981)';
+  btn.disabled = true;
+  setTimeout(closeModalDirect, 1200);
+}
+
+/* ─── Init ──────────────────────────────────────────────────── */
+renderCards(TASKS);
+</script>
+</body>
+</html>
